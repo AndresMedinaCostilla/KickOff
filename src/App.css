@@ -18,6 +18,29 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/* Estilos adicionales */
+.hover-opacity {
+  transition: opacity 0.2s ease;
+}
+
+.hover-opacity:hover {
+  opacity: 0.8;
+}
+
+/* Estilo para el espacio del logo temporal */
+.logo-placeholder {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #112a4c, #1a3a6d);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
