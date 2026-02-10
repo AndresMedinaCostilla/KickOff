@@ -1,0 +1,106 @@
+/* Estilos para el Navbar */
+
+/* Menu móvil */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1040;
+}
+
+.mobile-menu-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.mobile-menu-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  min-width: 250px;
+  height: 100%;
+  z-index: 1050;
+  background-color: #1a3a6d !important;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  animation: slideInRight 0.3s ease-out;
+}
+
+.mobile-menu-header {
+  border-bottom: 1px solid #2a5a9d !important;
+}
+
+.mobile-menu-logo {
+  width: 40px;
+  height: 40px;
+  background-color: #06111e !important;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+/* BOTONES DEL MENÚ - IMPORTANTE! */
+.nav-link.mobile-menu-item {
+  background-color: #06111e !important;
+  border: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-link.mobile-menu-item:hover {
+  transform: translateX(5px) !important;
+  background-color: #0a1a2e !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.nav-link.mobile-menu-item:active {
+  transform: translateX(5px) scale(0.98) !important;
+  background-color: #0e243e !important;
+}
+
+/* Si Bootstrap está sobrescribiendo los estilos, prueba esto también: */
+.mobile-menu-sidebar .nav-link.mobile-menu-item {
+  background-color: #06111e !important;
+}
+
+.mobile-menu-sidebar .nav-link.mobile-menu-item:hover {
+  background-color: #0a1a2e !important;
+}
+
+/* Animaciones */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Evitar scroll cuando el menú está abierto */
+body.menu-open {
+  overflow: hidden;
+}

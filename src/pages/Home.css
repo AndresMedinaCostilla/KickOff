@@ -1,0 +1,229 @@
+/* Home.css - Estilos específicos para la página Home */
+
+/* Contenedor principal */
+.home-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Doble espacio en móvil */
+@media (max-width: 768px) {
+  .home-container {
+    padding-left: 2rem !important; /* Doble espacio */
+    padding-right: 2rem !important; /* Doble espacio */
+  }
+  
+  .home-cards-row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+  }
+}
+
+/* Carrusel centrado */
+.home-carousel {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.home-carousel-inner {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* INDICADORES DEL CARRUSEL - CÍRCULOS PERFECTOS */
+.home-carousel-indicators {
+  bottom: 15px;
+  margin-bottom: 0;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-carousel-indicators button {
+  width: 12px !important; /* Fijar el tamaño para que sea circular */
+  height: 12px !important; /* Mismo valor que el ancho */
+  border-radius: 50% !important; /* Asegurar que sea un círculo perfecto */
+  margin: 0 6px !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important; /* Borde sutil */
+  padding: 0 !important;
+  text-indent: -9999px !important; /* Ocultar el texto */
+  opacity: 0.7 !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+/* Estado activo */
+.home-carousel-indicators button.active {
+  background-color: #2a5a9d !important;
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+  border-color: white !important;
+  box-shadow: 0 0 0 2px rgba(42, 90, 157, 0.3) !important;
+}
+
+/* Hover para indicadores */
+.home-carousel-indicators button:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  opacity: 0.9 !important;
+  transform: scale(1.1) !important;
+}
+
+/* Eliminar estilos por defecto de Bootstrap */
+.home-carousel-indicators [data-bs-target] {
+  box-sizing: border-box !important;
+  flex: 0 1 auto !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.home-carousel-caption {
+  z-index: 10;
+}
+
+/* Carrusel centrado en móvil - IMPORTANTE */
+@media (max-width: 576px) {
+  .home-carousel-caption {
+    bottom: 30% !important;
+    left: 5% !important;
+    right: 5% !important;
+    padding: 0.75rem !important;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  
+  .home-carousel-caption h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Centrar el carrusel completo */
+  #carouselFootball {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .carousel-inner {
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+  
+  /* Ajustar tamaño de indicadores en móvil */
+  .home-carousel-indicators button {
+    width: 10px !important;
+    height: 10px !important;
+    margin: 0 4px !important;
+  }
+  
+  .home-carousel-indicators button.active {
+    transform: scale(1.3) !important;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .home-carousel-caption {
+    bottom: 25% !important;
+    left: 10% !important;
+    right: 10% !important;
+  }
+}
+
+/* Para pantallas medianas */
+@media (min-width: 769px) and (max-width: 992px) {
+  .home-carousel-caption {
+    left: 15% !important;
+    right: 15% !important;
+  }
+}
+
+/* Cards mejoradas */
+.home-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1) !important;
+}
+
+/* Botones con hover */
+.home-card-btn {
+  transition: all 0.2s ease;
+  background-color: #2a5a9d !important;
+  color: white !important;
+}
+
+.home-card-btn:hover {
+  background-color: #3a6aad !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(42, 90, 157, 0.3);
+}
+
+.home-card-btn:active {
+  transform: translateY(0);
+}
+
+/* Controles del carrusel */
+.home-carousel-control-prev,
+.home-carousel-control-next {
+  opacity: 0.8;
+}
+
+.home-carousel-control-prev:hover,
+.home-carousel-control-next:hover {
+  opacity: 1;
+}
+
+/* Asegurar que las imágenes del carrusel se vean completas */
+.home-carousel-item img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Asegurar que las imágenes de las cards se ajusten bien */
+.home-card img {
+  object-fit: cover;
+}
+
+/* Estilos específicos para imágenes de cards en móvil */
+@media (max-width: 992px) {
+  .home-card-mobile-img {
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+/* Estilos para imágenes de cards en desktop */
+@media (min-width: 992px) {
+  .home-card-desktop-img {
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+/* Asegurar que todo el contenido del carrusel esté centrado */
+.carousel {
+  position: relative;
+  margin: 0 auto;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+}

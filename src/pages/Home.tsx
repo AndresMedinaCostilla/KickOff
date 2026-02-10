@@ -1,107 +1,172 @@
+import "./Home.css";
+
 function Home() {
   return (
-    <div className="container mt-4 mt-md-5">
-      {/* Carrusel */}
-      <div id="carouselFootball" className="carousel slide mb-5" data-bs-ride="carousel">
-        <div className="carousel-indicators">
-          <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="0" className="active"></button>
-          <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="1"></button>
-          <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="2"></button>
-        </div>
-        
-        <div className="carousel-inner rounded-3">
-          <div className="carousel-item active">
-            <img 
-              src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-              className="d-block w-100" 
-              alt="Estadio de fútbol" 
-              style={{ height: "400px", objectFit: "cover" }}
-            />
-            <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
-              <h5>Estadios de Clase Mundial</h5>
-              <p>Descubre los estadios más modernos para el Mundial 2026</p>
+    <div className="container mt-4 mt-md-5 home-container">
+      {/* Carrusel - CON CLASE home-carousel */}
+      <div className="mb-5">
+        <div id="carouselFootball" className="carousel slide home-carousel" data-bs-ride="carousel">
+          <div className="carousel-indicators home-carousel-indicators">
+            <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="0" className="active"></button>
+            <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselFootball" data-bs-slide-to="2"></button>
+          </div>
+          
+          <div className="carousel-inner rounded-3 overflow-hidden home-carousel-inner">
+            {/* Primer slide */}
+            <div className="carousel-item active">
+              <img 
+                src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&h=900&q=85"
+                className="d-block w-100"
+                alt="Estadio de fútbol"
+                style={{
+                  height: "50vh",
+                  minHeight: "300px",
+                  maxHeight: "450px",
+                  objectFit: "cover",
+                  objectPosition: "center"
+                }}
+              />
+              <div className="carousel-caption p-3 p-md-4 rounded-2 home-carousel-caption" 
+                   style={{ 
+                     backgroundColor: "rgba(6, 17, 30, 0.85)",
+                     bottom: "25%",
+                   }}>
+                <h4 className="fw-bold mb-2">Paises parrticipantes</h4>
+                <p className="d-none d-sm-block mb-0">Descubre los paises participantes en el Mundial 2026</p>
+              </div>
+            </div>
+            
+            {/* Segundo slide */}
+            <div className="carousel-item">
+              <img 
+                src="https://i.pinimg.com/736x/1b/f6/8b/1bf68b6ec9226bc9fee8e3a98a37186a.jpg"
+                className="d-block w-100"
+                alt="Jugadores de fútbol"
+                style={{
+                  height: "50vh",
+                  minHeight: "300px",
+                  maxHeight: "450px",
+                  objectFit: "cover",
+                  objectPosition: "center"
+                }}
+              />
+              <div className="carousel-caption p-3 p-md-4 rounded-2 home-carousel-caption"
+                   style={{ 
+                     backgroundColor: "rgba(6, 17, 30, 0.85)",
+                     bottom: "25%",
+                   }}>
+                <h4 className="fw-bold mb-2">Funcionalidad AR</h4>
+                <p className="d-none d-sm-block mb-0">Prueva la revolucionaria funcion AR para cada pais</p>
+              </div>
+            </div>
+            
+            {/* Tercer slide */}
+            <div className="carousel-item">
+              <img 
+                src="https://i.pinimg.com/736x/81/38/bd/8138bddb9571fd73de5bb0fddca92807.jpg"
+                className="d-block w-100"
+                alt="Partido de fútbol"
+                style={{
+                  height: "50vh",
+                  minHeight: "300px",
+                  maxHeight: "450px",
+                  objectFit: "cover",
+                  objectPosition: "center"
+                }}
+              />
+              <div className="carousel-caption p-3 p-md-4 rounded-2 home-carousel-caption"
+                   style={{ 
+                     backgroundColor: "rgba(6, 17, 30, 0.85)",
+                     bottom: "25%",
+                   }}>
+                <h4 className="fw-bold mb-2">Datos importantes</h4>
+                <p className="d-none d-sm-block mb-0">Navega y descubre informacion detallada de cada pais</p>
+              </div>
             </div>
           </div>
           
-          <div className="carousel-item">
-            <img 
-              src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-              className="d-block w-100" 
-              alt="Jugadores de fútbol" 
-              style={{ height: "400px", objectFit: "cover" }}
-            />
-            <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
-              <h5>Los Mejores Talentos</h5>
-              <p>Sigue a las estrellas del fútbol mundial en acción</p>
-            </div>
-          </div>
-          
-          <div className="carousel-item">
-            <img 
-              src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-              className="d-block w-100" 
-              alt="Partido de fútbol" 
-              style={{ height: "400px", objectFit: "cover" }}
-            />
-            <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
-              <h5>Emoción en Cada Partido</h5>
-              <p>Vive la pasión del fútbol en cada encuentro</p>
-            </div>
-          </div>
+          <button className="carousel-control-prev home-carousel-control-prev" type="button" data-bs-target="#carouselFootball" data-bs-slide="prev">
+            <span className="carousel-control-prev-icon"></span>
+          </button>
+          <button className="carousel-control-next home-carousel-control-next" type="button" data-bs-target="#carouselFootball" data-bs-slide="next">
+            <span className="carousel-control-next-icon"></span>
+          </button>
         </div>
-        
-        <button className="carousel-control-prev" type="button" data-bs-target="#carouselFootball" data-bs-slide="prev">
-          <span className="carousel-control-prev-icon"></span>
-        </button>
-        <button className="carousel-control-next" type="button" data-bs-target="#carouselFootball" data-bs-slide="next">
-          <span className="carousel-control-next-icon"></span>
-        </button>
       </div>
 
-      {/* Cards */}
-      <div className="row g-4 mb-5">
-        <div className="col-12 col-md-6">
-          <div className="card h-100 shadow-sm border-0">
+      {/* Cards - contenido igual que antes */}
+      <div className="row g-5 mb-5 px-2 px-sm-3 home-cards-row">
+        {/* Primera Card - Con botón para países */}
+        <div className="col-12 col-lg-6">
+          <div className="card h-100 shadow-sm border-0 overflow-hidden home-card">
             <div className="row g-0 h-100">
-              <div className="col-md-6">
+              {/* Desktop: imagen izquierda */}
+              <div className="col-lg-6 d-none d-lg-block h-100">
                 <img 
-                  src="https://images.unsplash.com/photo-1551958219-acbc608c6377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                  className="img-fluid rounded-start h-100 w-100" 
-                  alt="Equipos participantes" 
-                  style={{ objectFit: "cover" }}
+                  src="https://images.unsplash.com/photo-1551958219-acbc608c6377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80"
+                  className="h-100 w-100 home-card-desktop-img"
+                  alt="Equipos participantes"
                 />
               </div>
-              <div className="col-md-6 d-flex flex-column">
-                <div className="card-body">
-                  <h5 className="card-title">Equipos Participantes</h5>
-                  <p className="card-text">48 equipos de todo el mundo competirán por el título más prestigioso del fútbol en Norteamérica.</p>
-                  <a href="/paises" className="btn btn-sm text-white mt-auto" style={{ backgroundColor: "#112a4c" }}>
-                    Ver Países
-                  </a>
+              
+              {/* Móvil: imagen arriba */}
+              <div className="col-12 d-block d-lg-none">
+                <img 
+                  src="https://images.unsplash.com/photo-1551958219-acbc608c6377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300&q=80"
+                  className="w-100 home-card-mobile-img"
+                  alt="Equipos participantes"
+                />
+              </div>
+              
+              {/* Texto con botón */}
+              <div className="col-lg-6 col-12">
+                <div className="card-body p-4 p-md-4 d-flex flex-column h-100">
+                  <h5 className="card-title fw-bold mb-3">Paises participantes</h5>
+                  <p className="card-text mb-4 flex-grow-1">
+                    11 paises competiran en mexico durante el mundial 2026. Sigue el camino de cada selección.
+                  </p>
+                  <div>
+                    <a href="/paises" className="btn btn-sm px-4 py-2 fw-medium home-card-btn">
+                      Ver Países
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="col-12 col-md-6">
-          <div className="card h-100 shadow-sm border-0">
+        {/* Segunda Card - Sin botón */}
+        <div className="col-12 col-lg-6">
+          <div className="card h-100 shadow-sm border-0 overflow-hidden home-card">
             <div className="row g-0 h-100">
-              <div className="col-md-6">
+              {/* Desktop: imagen izquierda */}
+              <div className="col-lg-6 d-none d-lg-block h-100">
                 <img 
-                  src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                  className="img-fluid rounded-start h-100 w-100" 
-                  alt="Calendario de partidos" 
-                  style={{ objectFit: "cover" }}
+                  src="https://i.pinimg.com/1200x/01/a0/35/01a035796f580d4a15d2a629fb2787f0.jpg"
+                  className="h-100 w-100 home-card-desktop-img"
+                  alt="Calendario de partidos"
                 />
               </div>
-              <div className="col-md-6 d-flex flex-column">
-                <div className="card-body">
-                  <h5 className="card-title">Calendario Completo</h5>
-                  <p className="card-text">Sigue todos los partidos del Mundial 2026 con nuestro calendario interactivo y notificaciones.</p>
-                  <a href="#" className="btn btn-sm text-white mt-auto" style={{ backgroundColor: "#112a4c" }}>
-                    Ver Calendario
-                  </a>
+              
+              {/* Móvil: imagen arriba */}
+              <div className="col-12 d-block d-lg-none">
+                <img 
+                  src="https://i.pinimg.com/1200x/01/a0/35/01a035796f580d4a15d2a629fb2787f0.jpg"
+                  className="w-100 home-card-mobile-img"
+                  alt="Calendario de partidos"
+                />
+              </div>
+              
+              {/* Texto sin botón */}
+              <div className="col-lg-6 col-12">
+                <div className="card-body p-4 p-md-4 d-flex flex-column h-100">
+                  <h5 className="card-title fw-bold mb-3">Realidad aumentada</h5>
+                  <p className="card-text flex-grow-1">
+                    Prueba la realidad aumentada especial para cada pais y descubre informacion detallada de cada nacion.
+                  </p>
+                  {/* Sin botón aquí */}
                 </div>
               </div>
             </div>

@@ -1,0 +1,36 @@
+/* Estilos para el Footer */
+.footer-main {
+  background-color: #1a3a6d; /* Mismo color que navbar */
+  color: white;
+}
+
+.footer-logo {
+  width: 40px;
+  height: 40px;
+  background-color: #06111e; /* Azul oscuro para el logo */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer-links a:hover {
+  opacity: 0.8;
+}
+
+.footer-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footer-contact-item {
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+}
