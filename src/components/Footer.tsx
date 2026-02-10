@@ -51,7 +51,7 @@ function Footer() {
               </li>
               <li className="mb-2 footer-contact-item">
                 <i className="bi bi-envelope me-2"></i>
-                raul.cortezr@uanl.edu.mx
+                jose.cortezic@uanl.edu.mx
               </li>
               <li className="footer-contact-item">
                 <i className="bi bi-telephone me-2"></i>
