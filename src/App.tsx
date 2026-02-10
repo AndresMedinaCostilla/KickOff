@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar.tsx";
 import Home from "./pages/Home.tsx";
 import Paises from "./pages/Paises.tsx";
 import Ayuda from "./pages/Ayuda.tsx";
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/paises" element={<Paises />} />
         <Route path="/ayuda" element={<Ayuda />} />
       </Routes>
+      <Footer  />
     </BrowserRouter>
   );
 }
