@@ -41,14 +41,9 @@
 .mobile-menu-logo {
   width: 40px;
   height: 40px;
-  background-color: #06111e !important;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: white;
 }
 
 /* BOTONES DEL MENÚ - IMPORTANTE! */

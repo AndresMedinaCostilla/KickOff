@@ -1,4 +1,5 @@
 import "./Footer.css";
+import kickoffLogo from "./Kickoff logo blanco.png"; // Importa el logo
 
 function Footer() {
   return (
@@ -9,7 +10,11 @@ function Footer() {
             <div className="d-flex align-items-center mb-3">
               {/* Logo en footer */}
               <div className="me-3 footer-logo">
-                <span className="fw-bold">KO</span>
+                <img 
+                  src={kickoffLogo} 
+                  alt="KickOff Logo" 
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
               </div>
               <h5 className="fw-bold mb-0">KickOff</h5>
             </div>

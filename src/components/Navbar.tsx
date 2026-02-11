@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Navbar.css";
+import kickoffLogo from "./Kickoff logo blanco.png"; // Importa el logo
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,10 +36,14 @@ function Navbar() {
           {/* Logo + Nombre */}
           <div className="d-flex align-items-center">
             <div 
-              className="me-3 bg-white rounded-circle d-flex align-items-center justify-content-center" 
+              className="me-3 d-flex align-items-center justify-content-center" 
               style={{ width: "50px", height: "50px" }}
             >
-              <span className="text-dark fw-bold fs-5">KO</span>
+              <img 
+                src={kickoffLogo} 
+                alt="KickOff Logo" 
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
             </div>
             
             <Link className="navbar-brand fs-3 fw-bold text-white" to="/" onClick={closeMenu}>
@@ -95,7 +100,11 @@ function Navbar() {
             <div className="d-flex justify-content-between align-items-center p-4 mobile-menu-header">
               <div className="d-flex align-items-center">
                 <div className="me-3 mobile-menu-logo">
-                  KO
+                  <img 
+                    src={kickoffLogo} 
+                    alt="KickOff Logo" 
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
                 </div>
                 <span className="fw-bold fs-5 text-white">KickOff</span>
               </div>

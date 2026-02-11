@@ -7,13 +7,9 @@
 .footer-logo {
   width: 40px;
   height: 40px;
-  background-color: #06111e; /* Azul oscuro para el logo */
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: white;
 }
 
 .footer-links a {
