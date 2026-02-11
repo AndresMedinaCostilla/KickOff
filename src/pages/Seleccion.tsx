@@ -32,32 +32,32 @@ function Seleccion() {
       { 
         nombre: "GUILLERMO OCHOA", 
         posicion: "PORTERO", 
-        imagen: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/Sx8ezy4WExrIIZ53pFSnfGimM-S4WPTjTekWRg1fFqI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjIy/MzQ2NzU2My9waG90/by9zYW50YS1jbGFy/YS1jYWxpZm9ybmlh/LWd1aWxsZXJtby1v/Y2hvYS1vZi1tZXhp/Y28td2FybXMtdXAt/ZHVyaW5nLWEtZ2Ft/ZS1iZXR3ZWVuLWhv/bmR1cmFzLWFuZC5q/cGc_cz02MTJ4NjEy/Jnc9MCZrPTIwJmM9/c2JIZ0ltNjBCcnNf/NERBMEtyUXJtQi1h/VjBjVmg5ZWFWRzk4/dVl0VXRIQT0" 
       },
       { 
         nombre: "EDSON ÁLVAREZ", 
         posicion: "MEDIOCAMPISTA", 
-        imagen: "https://images.unsplash.com/photo-1577223625818-75bc1f2ac0e5?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/Zcins_qfyGCJYFAZnbV6sMg5vub_IIOy4i0k_EcRC9U/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjIy/MDkzMDE3MC9waG90/by9hcmxpbmd0b24t/dGV4YXMtZWRzb24t/YWx2YXJlei1vZi1t/ZXhpY28tbGluZS11/cC1kdXJpbmctZHVy/aW5nLXRoZS1ncm91/cC1zdGFnZS1ncm91/cC1hLW1hdGNoLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz12/SUN5TTRMUGFyMy1h/ZlVuVmh2Xy1jNVls/UGVVb1V5b19MWHlH/amNvRDVjPQ" 
       },
       { 
         nombre: "RAÚL JIMÉNEZ", 
         posicion: "DELANTERO", 
-        imagen: "https://images.unsplash.com/photo-1575361204342-1390d9c78e5e?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/AraxbPL8nanNialRJeWwDsyqy6L2k0SQwamwY8Inut0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjIy/MDkzMDE1MC9waG90/by9hcmxpbmd0b24t/dGV4YXMtcmF1bC1q/aW1lbmV6LW9mLW1l/eGljby1saW5lLXVw/LWR1cmluZy1kdXJp/bmctdGhlLWdyb3Vw/LXN0YWdlLWdyb3Vw/LWEtbWF0Y2guanBn/P3M9NjEyeDYxMiZ3/PTAmaz0yMCZjPWs4/QVN0ZGlzWjA0UFF0/VTBia0F2eGs0UXBh/ZnlPakhaME0ybk5O/dmVCU2c9" 
       },
       { 
         nombre: "HIRVING LOZANO", 
         posicion: "DELANTERO", 
-        imagen: "https://images.unsplash.com/photo-1577223625235-4d6c2d15f7b7?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/vi_fyjV4PuRYK6zI1XFs95Cqx_gDvMZTBAmxTMahFPE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjIw/MzE3MTU4OC9lcy9m/b3RvL3Nhbi1kaWVn/by1jYWxpZm9ybmlh/LWhpcnZpbmctbG96/YW5vLW9mLXNhbi1k/aWVnby1mYy1sb29r/cy1vbi1kdXJpbmct/YS1nYW1lLWFnYWlu/c3QtdGhlLXN0Lmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1N/cHliemFmUjJkTktX/ODVYQS1PTHFyVjc1/a3dHSDdxd3RyVXZm/ZlNoRm5ZPQ" 
       },
       { 
         nombre: "ANDRÉS GUARDADO", 
         posicion: "MEDIOCAMPISTA", 
-        imagen: "https://images.unsplash.com/photo-1577223625235-4d6c2d15f7b7?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/xxHHIAS67oyI2JNYEZdA_9rR9cjvlRadcwC_3tqDm-s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMuZ29hbC5jb20v/aW1hZ2VzL3YzL2Js/dDZmNjJmMmRlMDY2/ZDY2NDMvR2V0dHlJ/bWFnZXMtMTg3Mjcx/MzQyNF8oMSkuanBn/P2F1dG89d2VicCZm/b3JtYXQ9cGpwZyZ3/aWR0aD0zODQwJnF1/YWxpdHk9NjA" 
       },
       { 
         nombre: "JESÚS CORONA", 
         posicion: "DELANTERO", 
-        imagen: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400&auto=format&fit=crop&q=80" 
+        imagen: "https://imgs.search.brave.com/8o0UNnOn5iYcGpb4mbBa_ZfNIZKMzAoXfdrV_YKSOvE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/bWlsZW5pby5jb20v/dXBsb2Fkcy9tZWRp/YS8yMDIzLzA2LzE3/L2plc3VzLWNvcm9u/YS1zZS12YS1kZS5q/cGc" 
       }
     ]
   };
