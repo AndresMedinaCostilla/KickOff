@@ -1,0 +1,501 @@
+/* ARPage.css - Versión DEFINITIVA con ESPACIO REAL en los bordes */
+
+.ar-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #2a2a2a;
+}
+
+/* Fondo simulando cámara */
+.ar-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, #3a3a3a 0%, #1a1a1a 100%);
+  z-index: 1;
+}
+
+/* Botón de regreso */
+.ar-back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 100;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ar-back-button:hover {
+  transform: scale(1.05);
+  background: white;
+}
+
+/* Contenedor de botones flotantes */
+.ar-buttons-container {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 100;
+  padding: 0 20px;
+}
+
+/* Botones de acción */
+.ar-action-button {
+  background-color: #2a5a9d;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(42, 90, 157, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+  min-width: 150px;
+  text-transform: uppercase;
+}
+
+.ar-action-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(42, 90, 157, 0.6);
+  background-color: #1a3a6d;
+}
+
+.ar-action-button:active {
+  transform: translateY(0);
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Modal content - contenedor externo */
+.modal-content {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Tarjeta blanca */
+.modal-card {
+  background-color: white;
+  border-radius: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: visible;
+  width: 100%;
+  position: relative;
+}
+
+/* Botón cerrar modal */
+.modal-close-button {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background-color: #2a5a9d;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1100;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.modal-close-button:hover {
+  background-color: #1a3a6d;
+  transform: scale(1.1);
+}
+
+/* ============ MODAL BODY - ESPACIO REAL EN LOS BORDES ============ */
+.modal-body {
+  padding: 48px 40px; /* Padding horizontal GRANDE para desktop */
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ============ TRIVIA - ESPACIO ENTRE BORDES Y CONTENIDO ============ */
+.modal-question {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 0 16px; /* Margen horizontal para separar del borde */
+  line-height: 1.6;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  word-break: break-word;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 16px; /* Margen horizontal para separar del borde */
+  padding: 0;
+  width: auto;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.option-item:hover {
+  background-color: #e9ecef;
+  transform: translateX(5px);
+}
+
+.option-item.selected {
+  background-color: #e3f2fd;
+  border-color: #2a5a9d;
+}
+
+.option-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  border: 2.5px solid #ced4da;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.option-item.selected .option-circle {
+  border-color: #2a5a9d;
+  background-color: #2a5a9d;
+}
+
+.option-check {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.option-text {
+  font-size: 1.15rem;
+  color: #333;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ============ MODAL DE VIDEO ============ */
+.video-placeholder {
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  border-radius: 20px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 16px 4px 16px; /* Márgenes horizontales */
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: auto; /* Cambiado de calc a auto */
+}
+
+.video-play-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 18px;
+  background-color: rgba(42, 90, 157, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+
+.video-play-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.video-placeholder-text {
+  color: white;
+  font-size: 1rem;
+  opacity: 0.95;
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+/* Título de filtros - CENTRADO */
+.filters-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a3a6d;
+  margin: 16px 16px 8px 16px; /* Márgenes horizontales */
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Contenedor de filtros - CON ESPACIO EN LOS BORDES */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 16px 16px 16px; /* Márgenes horizontales */
+  padding: 0;
+  width: auto;
+  justify-content: flex-start;
+}
+
+.filter-chip {
+  background-color: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 0 0 auto;
+}
+
+.filter-chip:hover {
+  background-color: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.filter-chip.selected {
+  background-color: #2a5a9d;
+  color: white;
+  border-color: #1a3a6d;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(42, 90, 157, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(42, 90, 157, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(42, 90, 157, 0);
+  }
+}
+
+/* ============ RESPONSIVE - MÓVIL ============ */
+@media (max-width: 576px) {
+  .ar-buttons-container {
+    bottom: 20px;
+    gap: 12px;
+  }
+  
+  .ar-action-button {
+    padding: 14px 24px;
+    font-size: 1rem;
+    min-width: 120px;
+    border-radius: 10px;
+  }
+  
+  .modal-card {
+    border-radius: 24px;
+  }
+  
+  /* SOLUCIÓN DEFINITIVA PARA MÓVIL - MUCHO ESPACIO EN BORDES */
+  .modal-body {
+    padding: 32px 24px !important; /* Padding horizontal forzado */
+    gap: 28px;
+  }
+  
+  .modal-question {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin: 0 12px !important; /* Margen horizontal GRANDE */
+    padding: 0;
+  }
+  
+  .options-container {
+    margin: 0 12px !important; /* Margen horizontal GRANDE */
+    padding: 0;
+    gap: 14px;
+  }
+  
+  .option-item {
+    padding: 14px 20px;
+    border-radius: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .option-circle {
+    width: 26px;
+    height: 26px;
+    margin-right: 16px;
+    border-radius: 8px;
+    border-width: 2px;
+    flex-shrink: 0;
+  }
+  
+  .option-text {
+    font-size: 1.05rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+  
+  .option-check {
+    font-size: 0.95rem;
+  }
+  
+  /* ============ VIDEO EN MÓVIL ============ */
+  .video-placeholder {
+    height: 180px;
+    border-radius: 16px;
+    margin: 8px 16px !important; /* Márgenes horizontales GRANDES */
+    width: auto;
+  }
+  
+  .video-play-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+  }
+  
+  .video-play-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .video-placeholder-text {
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+  }
+  
+  .filters-title {
+    font-size: 1.15rem;
+    margin: 16px 16px 12px 16px !important; /* Márgenes horizontales */
+    text-align: center;
+  }
+  
+  .filters-container {
+    gap: 10px;
+    margin: 8px 16px 16px 16px !important; /* Márgenes horizontales GRANDES */
+    padding: 0;
+    justify-content: center;
+  }
+  
+  .filter-chip {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+}
+
+/* ============ RESPONSIVE - TABLET ============ */
+@media (min-width: 577px) and (max-width: 768px) {
+  .modal-body {
+    padding: 40px 32px;
+  }
+  
+  .modal-question {
+    margin: 0 16px;
+  }
+  
+  .options-container {
+    margin: 0 16px;
+  }
+  
+  .video-placeholder {
+    margin: 8px 20px;
+  }
+  
+  .filters-title {
+    margin: 16px 20px 8px 20px;
+    text-align: center;
+  }
+  
+  .filters-container {
+    margin: 8px 20px 16px 20px;
+    justify-content: center;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .ar-action-button:active {
+    transform: scale(0.95);
+  }
+  
+  .option-item:active {
+    background-color: #e9ecef;
+  }
+  
+  .filter-chip:active {
+    background-color: #e9ecef;
+  }
+}

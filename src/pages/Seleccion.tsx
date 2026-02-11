@@ -157,7 +157,7 @@ function Seleccion() {
     backgroundColor: "#2a5a9d",
     padding: "0"
   }}
-  onClick={() => alert("Función AR activada")}
+  onClick={() => navigate('/ar')} // Cambiado de alert a navegación
 >
   {/* Icono de cámara fotográfica SVG */}
   <svg 
