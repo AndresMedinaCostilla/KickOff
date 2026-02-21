@@ -1,0 +1,371 @@
+
+/* Contenedor principal */
+.mexico-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header con bandera */
+.bandera-header {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bandera-fondo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.6) contrast(1.1);
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%);
+}
+
+/* Botón de regreso */
+.btn-regresar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-regresar:hover {
+  transform: scale(1.05);
+}
+
+.btn-regresar:active {
+  transform: scale(0.95);
+}
+
+.regresar-icono {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Título del país */
+.pais-titulo-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.pais-titulo {
+  font-weight: bold;
+  margin-bottom: 0;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  letter-spacing: 1.5px;
+  color: white;
+}
+
+/* Botón AR flotante */
+.btn-ar-flotante {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  z-index: 1000;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2a5a9d;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ar-flotante:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(42, 90, 157, 0.4);
+}
+
+.camara-icono {
+  width: 40px;
+  height: 40px;
+}
+
+/* Títulos de sección */
+.seccion-titulo {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  letter-spacing: 1px;
+}
+
+/* Sección de estadio */
+.estadio-container {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.estadio-imagen-container {
+  position: relative;
+  height: 220px;
+}
+
+.estadio-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9) saturate(1.1);
+  transition: transform 0.3s ease;
+}
+
+.estadio-imagen:hover {
+  transform: scale(1.02);
+}
+
+.estadio-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+}
+
+.estadio-nombre {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.25rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  letter-spacing: 0.5px;
+}
+
+.estadio-ciudad {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  opacity: 0.9;
+}
+
+/* Sección de partidos */
+.partidos-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.partido-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.partido-item:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.partido-item:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.partido-border {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.partido-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.rival-bandera-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-right: 1rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.rival-bandera {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.partido-detalle {
+  flex-grow: 1;
+}
+
+.rival-nombre {
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.partido-fecha {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.partido-tipo-badge {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Sección de jugadores */
+.jugador-card {
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: all 0.25s ease;
+  background-color: white;
+}
+
+.jugador-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.jugador-imagen-container {
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+}
+
+.jugador-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.jugador-imagen:hover {
+  transform: scale(1.05);
+}
+
+.jugador-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.1));
+  pointer-events: none;
+}
+
+.jugador-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.jugador-nombre {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #333;
+  line-height: 1.2;
+}
+
+.jugador-posicion {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Media Queries para móviles */
+@media (max-width: 576px) {
+  .bandera-header {
+    height: 200px !important;
+  }
+  
+  .pais-titulo {
+    font-size: 2rem !important;
+  }
+  
+  .estadio-imagen-container {
+    height: 200px !important;
+  }
+  
+  .col-6 {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  
+  .jugador-imagen-container {
+    height: 120px !important;
+  }
+  
+  .btn-ar-flotante {
+    width: 65px !important;
+    height: 65px !important;
+    bottom: 20px !important;
+    right: 20px !important;
+  }
+  
+  .camara-icono {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  
+  .partido-item {
+    padding: 1rem !important;
+  }
+}
+
+/* Efecto de presión en móviles */
+@media (hover: none) and (pointer: coarse) {
+  .jugador-card:active {
+    transform: scale(0.98) !important;
+  }
+  
+  .btn-ar-flotante:active {
+    transform: scale(0.95) !important;
+  }
+  
+  .btn-regresar:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+/* Transiciones suaves */
+.jugador-card,
+.btn-ar-flotante,
+.btn-regresar,
+.estadio-imagen,
+.jugador-imagen {
+  transition: all 0.25s ease;
+}
