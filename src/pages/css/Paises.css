@@ -1,0 +1,54 @@
+/* Paises.css */
+
+.pais-card {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pais-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+  border-color: #d0d0d0 !important;
+}
+
+.pais-card:active {
+  transform: scale(0.98) !important;
+}
+
+.bandera-container {
+  height: 110px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bandera-imagen {
+  max-height: 90px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pais-nombre {
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+/* Media Queries para móviles */
+@media (max-width: 576px) {
+  .pais-card {
+    border: 1.8px solid #e0e0e0 !important;
+  }
+  
+  .bandera-container {
+    height: 100px !important;
+  }
+}
