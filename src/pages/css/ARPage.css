@@ -1,4 +1,4 @@
-/* ARPage.css - Versión DEFINITIVA con ESPACIO REAL en los bordes */
+/* ARPage.css - Versión LIMPIA con solo estilos necesarios */
 
 .ar-container {
   position: relative;
@@ -146,19 +146,19 @@
   transform: scale(1.1);
 }
 
-/* ============ MODAL BODY - ESPACIO REAL EN LOS BORDES ============ */
+/* ============ MODAL BODY ============ */
 .modal-body {
-  padding: 48px 40px; /* Padding horizontal GRANDE para desktop */
+  padding: 48px 40px;
   display: flex;
   flex-direction: column;
   gap: 32px;
 }
 
-/* ============ TRIVIA - ESPACIO ENTRE BORDES Y CONTENIDO ============ */
+/* ============ TRIVIA ============ */
 .modal-question {
   font-size: 1.3rem;
   color: #333;
-  margin: 0 16px; /* Margen horizontal para separar del borde */
+  margin: 0 16px;
   line-height: 1.6;
   text-align: center;
   font-weight: 700;
@@ -170,7 +170,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin: 0 16px; /* Margen horizontal para separar del borde */
+  margin: 0 16px;
   padding: 0;
   width: auto;
 }
@@ -230,63 +230,43 @@
   white-space: nowrap;
 }
 
-/* ============ MODAL DE VIDEO ============ */
-.video-placeholder {
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+/* ============ VIDEO ============ */
+.video-container {
+  margin: 8px 16px 4px 16px;
   border-radius: 20px;
-  height: 220px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 8px 16px 4px 16px; /* Márgenes horizontales */
-  position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: auto; /* Cambiado de calc a auto */
+  background-color: #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.video-play-icon {
-  width: 90px;
-  height: 90px;
-  border-radius: 18px;
-  background-color: rgba(42, 90, 157, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  animation: pulse 2s infinite;
+.video-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  background-color: #000;
+  transition: filter 0.3s ease;
 }
 
-.video-play-icon svg {
-  width: 48px;
-  height: 48px;
-}
+/* Los controles nativos del video ya incluyen barra de volumen */
 
-.video-placeholder-text {
-  color: white;
-  font-size: 1rem;
-  opacity: 0.95;
-  letter-spacing: 2px;
-  font-weight: 500;
-}
-
-/* Título de filtros - CENTRADO */
+/* Título de filtros */
 .filters-title {
   font-size: 1.3rem;
   font-weight: 700;
   color: #1a3a6d;
-  margin: 16px 16px 8px 16px; /* Márgenes horizontales */
+  margin: 16px 16px 8px 16px;
   text-align: center;
   letter-spacing: 0.5px;
 }
 
-/* Contenedor de filtros - CON ESPACIO EN LOS BORDES */
+/* Contenedor de filtros */
 .filters-container {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin: 8px 16px 16px 16px; /* Márgenes horizontales */
+  margin: 8px 16px 16px 16px;
   padding: 0;
   width: auto;
   justify-content: flex-start;
@@ -318,12 +298,8 @@
 
 /* Animaciones */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -338,15 +314,9 @@
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(42, 90, 157, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(42, 90, 157, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(42, 90, 157, 0);
-  }
+  0% { box-shadow: 0 0 0 0 rgba(42, 90, 157, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(42, 90, 157, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(42, 90, 157, 0); }
 }
 
 /* ============ RESPONSIVE - MÓVIL ============ */
@@ -367,21 +337,20 @@
     border-radius: 24px;
   }
   
-  /* SOLUCIÓN DEFINITIVA PARA MÓVIL - MUCHO ESPACIO EN BORDES */
   .modal-body {
-    padding: 32px 24px !important; /* Padding horizontal forzado */
+    padding: 32px 24px !important;
     gap: 28px;
   }
   
   .modal-question {
     font-size: 1.15rem;
     line-height: 1.5;
-    margin: 0 12px !important; /* Margen horizontal GRANDE */
+    margin: 0 12px !important;
     padding: 0;
   }
   
   .options-container {
-    margin: 0 12px !important; /* Margen horizontal GRANDE */
+    margin: 0 12px !important;
     padding: 0;
     gap: 14px;
   }
@@ -389,8 +358,6 @@
   .option-item {
     padding: 14px 20px;
     border-radius: 14px;
-    width: 100%;
-    box-sizing: border-box;
   }
   
   .option-circle {
@@ -398,8 +365,6 @@
     height: 26px;
     margin-right: 16px;
     border-radius: 8px;
-    border-width: 2px;
-    flex-shrink: 0;
   }
   
   .option-text {
@@ -408,44 +373,15 @@
     word-break: break-word;
   }
   
-  .option-check {
-    font-size: 0.95rem;
-  }
-  
-  /* ============ VIDEO EN MÓVIL ============ */
-  .video-placeholder {
-    height: 180px;
-    border-radius: 16px;
-    margin: 8px 16px !important; /* Márgenes horizontales GRANDES */
-    width: auto;
-  }
-  
-  .video-play-icon {
-    width: 70px;
-    height: 70px;
-    border-radius: 16px;
-  }
-  
-  .video-play-icon svg {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .video-placeholder-text {
-    font-size: 0.9rem;
-    letter-spacing: 1.5px;
-  }
-  
   .filters-title {
     font-size: 1.15rem;
-    margin: 16px 16px 12px 16px !important; /* Márgenes horizontales */
+    margin: 16px 16px 12px 16px !important;
     text-align: center;
   }
   
   .filters-container {
     gap: 10px;
-    margin: 8px 16px 16px 16px !important; /* Márgenes horizontales GRANDES */
-    padding: 0;
+    margin: 8px 16px 16px 16px !important;
     justify-content: center;
   }
   
@@ -453,6 +389,14 @@
     padding: 12px 20px;
     font-size: 0.95rem;
     border-radius: 10px;
+  }
+  
+  .video-container {
+    margin: 8px 16px 4px 16px !important;
+  }
+  
+  .video-player {
+    max-height: 300px;
   }
 }
 
@@ -470,10 +414,6 @@
     margin: 0 16px;
   }
   
-  .video-placeholder {
-    margin: 8px 20px;
-  }
-  
   .filters-title {
     margin: 16px 20px 8px 20px;
     text-align: center;
@@ -482,6 +422,10 @@
   .filters-container {
     margin: 8px 20px 16px 20px;
     justify-content: center;
+  }
+  
+  .video-container {
+    margin: 8px 20px 4px 20px;
   }
 }
 

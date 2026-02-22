@@ -11,7 +11,7 @@ function Paises() {
   }
 
   const paisesMundial2026: Pais[] = [
-    { nombre: "México", bandera: "https://flagcdn.com/w320/mx.png", ruta: "/mexico" },
+    // { nombre: "México", bandera: "https://flagcdn.com/w320/mx.png", ruta: "/mexico" },
     { nombre: "Sudáfrica", bandera: "https://flagcdn.com/w320/za.png", ruta: "/sudafrica" },
     { nombre: "Corea del Sur", bandera: "https://flagcdn.com/w320/kr.png", ruta: "/corea" },
     { nombre: "Colombia", bandera: "https://flagcdn.com/w320/co.png", ruta: "/colombia" },

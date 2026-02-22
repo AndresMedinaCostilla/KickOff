@@ -60,6 +60,13 @@ function Tunez() {
     ]
   };
 
+  const handleARClick = () => {
+  console.log('Guardando país:', paisSeleccionado.nombre);
+  localStorage.setItem('pais_actual_ar', paisSeleccionado.nombre);
+  console.log('LocalStorage después de guardar:', localStorage.getItem('pais_actual_ar'));
+  navigate('/ar');
+  };
+
   return (
     <div className="container-fluid px-0 mexico-container">
       {/* Header con bandera de fondo */}
@@ -97,7 +104,7 @@ function Tunez() {
         {/* Botón AR flotante con icono de cámara fotográfica */}
         <button 
           className="btn-ar-flotante"
-          onClick={() => navigate('/ar')}
+          onClick={handleARClick}
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
