@@ -1,26 +1,56 @@
-/* ARPage.css - Versión LIMPIA con solo estilos necesarios */
+/* ARPage.css - Versión con cámara y sin scroll */
 
-.ar-container {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  background-color: #2a2a2a;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Fondo simulando cámara */
-.ar-background {
+html, body {
+  overflow: hidden;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+}
+
+.ar-container {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(145deg, #3a3a3a 0%, #1a1a1a 100%);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+}
+
+/* Video de la cámara */
+.ar-camera-feed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Cambiado de 'cover' a 'contain' */
   z-index: 1;
+  transform: scaleX(-1); /* Efecto espejo para selfie */
+  background-color: #000;
+}
+
+/* Overlay para mejor contraste */
+.ar-camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Botón de regreso */
 .ar-back-button {
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
   width: 45px;
@@ -44,9 +74,24 @@
   background: white;
 }
 
+/* Indicador de país */
+.ar-pais-indicator {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  z-index: 100;
+  font-size: 0.9rem;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 /* Contenedor de botones flotantes */
 .ar-buttons-container {
-  position: fixed;
+  position: absolute;
   bottom: 30px;
   left: 0;
   right: 0;
@@ -67,27 +112,48 @@
   font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 1px;
-  box-shadow: 0 6px 20px rgba(42, 90, 157, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;
   flex: 0 1 auto;
   min-width: 150px;
   text-transform: uppercase;
+  backdrop-filter: blur(5px);
+  background-color: rgba(42, 90, 157, 0.9);
 }
 
 .ar-action-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(42, 90, 157, 0.6);
-  background-color: #1a3a6d;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background-color: rgba(26, 58, 109, 0.95);
 }
 
 .ar-action-button:active {
   transform: translateY(0);
 }
 
+/* Mensaje de error de cámara */
+.ar-camera-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  z-index: 200;
+  text-align: center;
+  font-size: 1.1rem;
+  max-width: 80%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Modal overlay */
 .modal-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -101,7 +167,7 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-/* Modal content - contenedor externo */
+/* Modal content */
 .modal-content {
   position: relative;
   max-width: 500px;
@@ -146,7 +212,7 @@
   transform: scale(1.1);
 }
 
-/* ============ MODAL BODY ============ */
+/* Modal body */
 .modal-body {
   padding: 48px 40px;
   display: flex;
@@ -154,7 +220,7 @@
   gap: 32px;
 }
 
-/* ============ TRIVIA ============ */
+/* Trivia */
 .modal-question {
   font-size: 1.3rem;
   color: #333;
@@ -230,7 +296,7 @@
   white-space: nowrap;
 }
 
-/* ============ VIDEO ============ */
+/* Video */
 .video-container {
   margin: 8px 16px 4px 16px;
   border-radius: 20px;
@@ -249,9 +315,7 @@
   transition: filter 0.3s ease;
 }
 
-/* Los controles nativos del video ya incluyen barra de volumen */
-
-/* Título de filtros */
+/* Filtros */
 .filters-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -261,7 +325,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Contenedor de filtros */
 .filters-container {
   display: flex;
   flex-wrap: wrap;
@@ -313,13 +376,7 @@
   }
 }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(42, 90, 157, 0.7); }
-  70% { box-shadow: 0 0 0 12px rgba(42, 90, 157, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(42, 90, 157, 0); }
-}
-
-/* ============ RESPONSIVE - MÓVIL ============ */
+/* Responsive */
 @media (max-width: 576px) {
   .ar-buttons-container {
     bottom: 20px;
@@ -344,14 +401,11 @@
   
   .modal-question {
     font-size: 1.15rem;
-    line-height: 1.5;
     margin: 0 12px !important;
-    padding: 0;
   }
   
   .options-container {
     margin: 0 12px !important;
-    padding: 0;
     gap: 14px;
   }
   
@@ -376,7 +430,6 @@
   .filters-title {
     font-size: 1.15rem;
     margin: 16px 16px 12px 16px !important;
-    text-align: center;
   }
   
   .filters-container {
@@ -397,35 +450,6 @@
   
   .video-player {
     max-height: 300px;
-  }
-}
-
-/* ============ RESPONSIVE - TABLET ============ */
-@media (min-width: 577px) and (max-width: 768px) {
-  .modal-body {
-    padding: 40px 32px;
-  }
-  
-  .modal-question {
-    margin: 0 16px;
-  }
-  
-  .options-container {
-    margin: 0 16px;
-  }
-  
-  .filters-title {
-    margin: 16px 20px 8px 20px;
-    text-align: center;
-  }
-  
-  .filters-container {
-    margin: 8px 20px 16px 20px;
-    justify-content: center;
-  }
-  
-  .video-container {
-    margin: 8px 20px 4px 20px;
   }
 }
 

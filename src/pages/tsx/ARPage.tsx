@@ -112,7 +112,18 @@ function ARPage() {
   const [triviaData, setTriviaData] = useState<TriviaData | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const cameraRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Prevenir scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   // Verificar si hay un país activo al cargar la página
   useEffect(() => {
@@ -143,6 +154,101 @@ function ARPage() {
       navigate('/paises');
     }
   }, [navigate]);
+
+  // Inicializar la cámara con manejo de errores mejorado
+  useEffect(() => {
+    let mounted = true;
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const startCamera = async () => {
+      try {
+        // Verificar si el navegador soporta getUserMedia
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setCameraError('Tu navegador no soporta acceso a la cámara');
+          return;
+        }
+
+        // Primero intentar con la cámara trasera
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: 'environment' } },
+            audio: false
+          });
+          
+          if (!mounted) {
+            stream.getTracks().forEach(track => track.stop());
+            return;
+          }
+
+          handleStreamSuccess(stream);
+        } catch (backCameraError) {
+          console.log('Cámara trasera no disponible, intentando con cualquier cámara');
+          
+          // Si falla la trasera, intentar con cualquier cámara disponible
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+              audio: false
+            });
+            
+            if (!mounted) {
+              stream.getTracks().forEach(track => track.stop());
+              return;
+            }
+
+            handleStreamSuccess(stream);
+          } catch (anyCameraError) {
+            throw anyCameraError; // Propagar el error para manejarlo
+          }
+        }
+      } catch (error) {
+        console.error('Error al acceder a la cámara:', error);
+        
+        if (!mounted) return;
+
+        if (error instanceof Error) {
+          if (error.name === 'NotAllowedError') {
+            setCameraError('Permiso de cámara denegado. Por favor, permite el acceso a la cámara.');
+          } else if (error.name === 'NotFoundError') {
+            setCameraError('No se encontró ninguna cámara en tu dispositivo.');
+          } else if (error.name === 'NotReadableError') {
+            setCameraError('No se puede acceder a la cámara. Está siendo usada por otra aplicación?');
+          } else if (error.name === 'OverconstrainedError') {
+            setCameraError('No se pudo acceder a la cámara con las especificaciones solicitadas.');
+          } else {
+            setCameraError(`Error al acceder a la cámara: ${error.message || 'Intenta de nuevo'}`);
+          }
+        } else {
+          setCameraError('Error desconocido al acceder a la cámara');
+        }
+      }
+    };
+
+    const handleStreamSuccess = (stream: MediaStream) => {
+      streamRef.current = stream;
+      
+      if (cameraRef.current) {
+        cameraRef.current.srcObject = stream;
+        cameraRef.current.play().catch(e => {
+          console.log('Error al reproducir la cámara:', e);
+        });
+      }
+    };
+
+    startCamera();
+
+    // Limpiar al desmontar
+    return () => {
+      mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => {
+          track.stop();
+        });
+        streamRef.current = null;
+      }
+    };
+  }, []);
 
   const getVideoSrc = (pais: string | null): string => {
     if (!pais) return '';
@@ -220,9 +326,10 @@ function ARPage() {
   // Mostrar loading mientras verificamos
   if (isLoading) {
     return (
-      <div className="ar-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="ar-background"></div>
-        <div style={{ color: 'white', zIndex: 10 }}>Cargando...</div>
+      <div className="ar-container">
+        <div className="ar-camera-error">
+          Cargando...
+        </div>
       </div>
     );
   }
@@ -234,6 +341,42 @@ function ARPage() {
 
   return (
     <div className="ar-container">
+      {/* Video de la cámara en el fondo */}
+      <video
+        ref={cameraRef}
+        className="ar-camera-feed"
+        autoPlay
+        playsInline
+        muted
+      />
+      
+      {/* Overlay oscuro semitransparente sobre la cámara para mejor contraste */}
+      <div className="ar-camera-overlay"></div>
+
+      {/* Mensaje de error de cámara si existe */}
+      {cameraError && (
+        <div className="ar-camera-error">
+          {cameraError}
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{
+              marginTop: '15px',
+              padding: '10px 20px',
+              background: '#2a5a9d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}
+          >
+            Reintentar
+          </button>
+        </div>
+      )}
+
       {/* Botón de regreso */}
       <button 
         className="ar-back-button"
@@ -242,21 +385,8 @@ function ARPage() {
         ←
       </button>
 
-      {/* Fondo simulando cámara */}
-      <div className="ar-background"></div>
-
       {/* Mostrar país actual */}
-      <div className="ar-pais-indicator" style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        background: 'rgba(0,0,0,0.5)',
-        color: 'white',
-        padding: '8px 16px',
-        borderRadius: '20px',
-        zIndex: 100,
-        fontSize: '0.9rem'
-      }}>
+      <div className="ar-pais-indicator">
         {paisActual}
       </div>
 
