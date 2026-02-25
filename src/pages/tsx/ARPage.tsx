@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/ARPage.css';
 import { obtenerPaisActual, eliminarPaisActual } from '../ts/paisStorage';
+import ARModel from './ARModel';
 
 // Definir el tipo para las opciones de trivia
 interface TriviaOption {
@@ -117,13 +118,24 @@ function ARPage() {
   const cameraRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Prevenir scroll
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
+  // Prevenir scroll SOLO en ARPage, no en toda la app
+  // useEffect(() => {
+  //   // Guardar el estilo original
+  //   const originalOverflow = document.body.style.overflow;
+  //   const originalPosition = document.body.style.position;
+    
+  //   // Prevenir scroll en ARPage
+  //   document.body.style.overflow = 'hidden';
+  //   document.body.style.position = 'fixed';
+  //   document.body.style.width = '100%';
+    
+  //   return () => {
+  //     // Restaurar scroll al salir
+  //     document.body.style.overflow = originalOverflow;
+  //     document.body.style.position = originalPosition;
+  //     document.body.style.width = 'auto';
+  //   };
+  // }, []);
 
   // Verificar si hay un país activo al cargar la página
   useEffect(() => {
@@ -158,8 +170,6 @@ function ARPage() {
   // Inicializar la cámara con manejo de errores mejorado
   useEffect(() => {
     let mounted = true;
-    let retryCount = 0;
-    const maxRetries = 3;
 
     const startCamera = async () => {
       try {
@@ -199,7 +209,7 @@ function ARPage() {
 
             handleStreamSuccess(stream);
           } catch (anyCameraError) {
-            throw anyCameraError; // Propagar el error para manejarlo
+            throw anyCameraError;
           }
         }
       } catch (error) {
@@ -213,7 +223,7 @@ function ARPage() {
           } else if (error.name === 'NotFoundError') {
             setCameraError('No se encontró ninguna cámara en tu dispositivo.');
           } else if (error.name === 'NotReadableError') {
-            setCameraError('No se puede acceder a la cámara. Está siendo usada por otra aplicación?');
+            setCameraError('No se puede acceder a la cámara. ¿Está siendo usada por otra aplicación?');
           } else if (error.name === 'OverconstrainedError') {
             setCameraError('No se pudo acceder a la cámara con las especificaciones solicitadas.');
           } else {
@@ -353,6 +363,9 @@ function ARPage() {
       {/* Overlay oscuro semitransparente sobre la cámara para mejor contraste */}
       <div className="ar-camera-overlay"></div>
 
+      {/* MODELO 3D DEL PAÍS */}
+      <ARModel pais={paisActual} />
+
       {/* Mensaje de error de cámara si existe */}
       {cameraError && (
         <div className="ar-camera-error">
@@ -461,7 +474,7 @@ function ARPage() {
       {/* Modal de Video con reproductor nativo */}
       {showVideoModal && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content video-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-button" onClick={closeModal}>
               ✕
             </button>

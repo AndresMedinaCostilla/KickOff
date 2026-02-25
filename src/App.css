@@ -1,8 +1,10 @@
+/* Eliminar restricciones de ancho que causan el recorte */
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 2rem; */
+  width: 100%;
+  min-height: 100vh;
 }
 
 .logo {

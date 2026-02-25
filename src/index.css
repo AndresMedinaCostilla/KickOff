@@ -24,10 +24,13 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* Eliminar flex que causa problemas */
+  /* display: flex;
+  place-items: center; */
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden; /* Solo oculta scroll horizontal */
 }
 
 h1 {

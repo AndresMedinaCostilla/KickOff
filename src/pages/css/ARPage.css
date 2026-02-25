@@ -1,18 +1,6 @@
-/* ARPage.css - Versión con cámara y sin scroll */
+/* ARPage.css - Versión con cámara y sin scroll SOLO en ARPage */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  overflow: hidden;
-  height: 100%;
-  position: fixed;
-  width: 100%;
-}
-
+/* Estos estilos SOLO aplican cuando estás en ARPage */
 .ar-container {
   position: fixed;
   top: 0;
@@ -21,6 +9,12 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: #000;
+  z-index: 1000;
+}
+
+/* Para asegurar que el body no herede el fixed de ARPage */
+body:has(.ar-container) {
+  overflow: hidden;
 }
 
 /* Video de la cámara */
@@ -30,9 +24,9 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Cambiado de 'cover' a 'contain' */
+  object-fit: contain;
   z-index: 1;
-  transform: scaleX(-1); /* Efecto espejo para selfie */
+  transform: scaleX(-1);
   background-color: #000;
 }
 
