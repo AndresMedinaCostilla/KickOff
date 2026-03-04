@@ -113,152 +113,143 @@ function ARPage() {
   const [triviaData, setTriviaData] = useState<TriviaData | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [arError, setArError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const cameraRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const isNavigatingRef = useRef(false);
 
-  // Prevenir scroll SOLO en ARPage, no en toda la app
-  // useEffect(() => {
-  //   // Guardar el estilo original
-  //   const originalOverflow = document.body.style.overflow;
-  //   const originalPosition = document.body.style.position;
+  // RESTAURACIÓN COMPLETA - Función mejorada
+  const restoreBodyStyles = () => {
+    // Remover clases específicas
+    document.body.classList.remove('ar-active', 'menu-open', 'a-body');
+    document.documentElement.classList.remove('a-html');
     
-  //   // Prevenir scroll en ARPage
-  //   document.body.style.overflow = 'hidden';
-  //   document.body.style.position = 'fixed';
-  //   document.body.style.width = '100%';
+    // Limpiar TODOS los estilos inline
+    document.body.removeAttribute('style');
+    document.documentElement.removeAttribute('style');
     
-  //   return () => {
-  //     // Restaurar scroll al salir
-  //     document.body.style.overflow = originalOverflow;
-  //     document.body.style.position = originalPosition;
-  //     document.body.style.width = 'auto';
-  //   };
-  // }, []);
+    // Forzar reflow
+    void document.body.offsetHeight;
+    
+    // Restaurar valores por defecto explícitamente
+    document.body.style.cssText = `
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      height: auto;
+      position: static;
+      width: auto;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+    `;
+    
+    document.documentElement.style.cssText = `
+      overflow: visible;
+      height: auto;
+    `;
+    
+    // Scroll al top
+    window.scrollTo(0, 0);
+  };
 
-  // Verificar si hay un país activo al cargar la página
+  // LIMPIEZA AGRESIVA DE AR.JS
+  const cleanupAR = () => {
+    console.log('Limpiando recursos AR...');
+
+    // 1. Detener TODOS los tracks de medios
+    document.querySelectorAll('video').forEach(video => {
+      if (video.srcObject) {
+        const stream = video.srcObject as MediaStream;
+        stream.getTracks().forEach(track => {
+          track.stop();
+          track.enabled = false;
+        });
+        video.srcObject = null;
+      }
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+      video.remove();
+    });
+
+    // 2. Limpiar canvases de WebGL
+    document.querySelectorAll('canvas').forEach(canvas => {
+      const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+      if (gl) {
+        const loseContext = gl.getExtension('WEBGL_lose_context');
+        if (loseContext) loseContext.loseContext();
+      }
+      canvas.remove();
+    });
+
+    // 3. Eliminar elementos de A-Frame/AR.js
+    ['a-scene', 'a-marker', 'a-entity', 'a-box', 'a-light', 'a-camera', 'a-assets'].forEach(tag => {
+      document.querySelectorAll(tag).forEach(el => el.remove());
+    });
+
+    // 4. Eliminar elementos inyectados por AR.js
+    document.querySelectorAll('.arjs-loader, .a-enter-vr-button, .a-orientation-modal, .a-modal, .a-canvas').forEach(el => el.remove());
+    
+    // 5. Eliminar scripts dinámicos de AR.js si existen
+    document.querySelectorAll('script[src*="ar.js"], script[src*="aframe"]').forEach(el => {
+      // No eliminamos los del index.html, solo los dinámicos
+      if (!el.getAttribute('data-permanent')) {
+        el.remove();
+      }
+    });
+
+    // 6. Limpiar contenedor específico
+    const arModelContainer = document.querySelector('[data-ar-model="true"]');
+    if (arModelContainer) {
+      arModelContainer.innerHTML = '';
+    }
+
+    // 7. Restaurar estilos
+    restoreBodyStyles();
+  };
+
+  // VERIFICACIÓN INICIAL
   useEffect(() => {
     const pais = obtenerPaisActual();
     console.log('País obtenido en ARPage:', pais);
-    console.log('LocalStorage en ARPage:', localStorage.getItem('pais_actual_ar'));
     
     if (pais) {
       setPaisActual(pais);
-      // Cargar la trivia correspondiente al país
       if (triviaPorPais[pais]) {
         setTriviaData(triviaPorPais[pais]);
       } else {
-        // Trivia por defecto si no hay datos para el país
         setTriviaData({
           pregunta: "¿Cuántos equipos participan en la Copa Mundial de Fútbol?",
           opciones: [
             { id: 1, text: "12", correct: false },
-            { id: 2, text: "16", correct: true },
+            { id: 2, text: "32", correct: true },
             { id: 3, text: "24", correct: false },
-            { id: 4, text: "32", correct: false }
+            { id: 4, text: "16", correct: false }
           ]
         });
       }
       setIsLoading(false);
+      
+      // Aplicar estilos de AR
+      document.body.classList.add('ar-active');
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
     } else {
-      // Si no hay país, redirigir
       navigate('/paises');
     }
-  }, [navigate]);
 
-  // Inicializar la cámara con manejo de errores mejorado
-  useEffect(() => {
-    let mounted = true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setArError('Tu navegador no soporta acceso a la cámara necesario para AR');
+    }
 
-    const startCamera = async () => {
-      try {
-        // Verificar si el navegador soporta getUserMedia
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          setCameraError('Tu navegador no soporta acceso a la cámara');
-          return;
-        }
-
-        // Primero intentar con la cámara trasera
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { exact: 'environment' } },
-            audio: false
-          });
-          
-          if (!mounted) {
-            stream.getTracks().forEach(track => track.stop());
-            return;
-          }
-
-          handleStreamSuccess(stream);
-        } catch (backCameraError) {
-          console.log('Cámara trasera no disponible, intentando con cualquier cámara');
-          
-          // Si falla la trasera, intentar con cualquier cámara disponible
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-              video: true,
-              audio: false
-            });
-            
-            if (!mounted) {
-              stream.getTracks().forEach(track => track.stop());
-              return;
-            }
-
-            handleStreamSuccess(stream);
-          } catch (anyCameraError) {
-            throw anyCameraError;
-          }
-        }
-      } catch (error) {
-        console.error('Error al acceder a la cámara:', error);
-        
-        if (!mounted) return;
-
-        if (error instanceof Error) {
-          if (error.name === 'NotAllowedError') {
-            setCameraError('Permiso de cámara denegado. Por favor, permite el acceso a la cámara.');
-          } else if (error.name === 'NotFoundError') {
-            setCameraError('No se encontró ninguna cámara en tu dispositivo.');
-          } else if (error.name === 'NotReadableError') {
-            setCameraError('No se puede acceder a la cámara. ¿Está siendo usada por otra aplicación?');
-          } else if (error.name === 'OverconstrainedError') {
-            setCameraError('No se pudo acceder a la cámara con las especificaciones solicitadas.');
-          } else {
-            setCameraError(`Error al acceder a la cámara: ${error.message || 'Intenta de nuevo'}`);
-          }
-        } else {
-          setCameraError('Error desconocido al acceder a la cámara');
-        }
-      }
-    };
-
-    const handleStreamSuccess = (stream: MediaStream) => {
-      streamRef.current = stream;
-      
-      if (cameraRef.current) {
-        cameraRef.current.srcObject = stream;
-        cameraRef.current.play().catch(e => {
-          console.log('Error al reproducir la cámara:', e);
-        });
-      }
-    };
-
-    startCamera();
-
-    // Limpiar al desmontar
+    // Limpieza al desmontar
     return () => {
-      mounted = false;
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => {
-          track.stop();
-        });
-        streamRef.current = null;
+      if (!isNavigatingRef.current) {
+        cleanupAR();
       }
     };
-  }, []);
+  }, [navigate]);
 
   const getVideoSrc = (pais: string | null): string => {
     if (!pais) return '';
@@ -286,6 +277,17 @@ function ARPage() {
     { id: 4, text: "Vintage", value: "vintage" }
   ];
 
+  // Función para obtener el nombre de la clase del filtro
+  const getFilterClassName = () => {
+    switch (selectedFilter) {
+      case 1: return 'normal';
+      case 2: return 'sepia';
+      case 3: return 'bw';
+      case 4: return 'vintage';
+      default: return 'normal';
+    }
+  };
+
   const closeModal = () => {
     setShowTriviaModal(false);
     setShowVideoModal(false);
@@ -294,7 +296,6 @@ function ARPage() {
     setShowResult(false);
     setIsCorrect(false);
     
-    // Pausar el video al cerrar el modal
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -319,21 +320,27 @@ function ARPage() {
 
   const handleBackClick = () => {
     console.log('Volviendo a países, eliminando país');
+    
+    // Marcar navegación
+    isNavigatingRef.current = true;
+    
+    // Limpieza inmediata y completa
+    cleanupAR();
+    
+    // Eliminar país
     eliminarPaisActual();
-    navigate('/paises');
+    
+    // Navegar después de limpiar todo
+    setTimeout(() => {
+      // Doble verificación de limpieza
+      document.querySelectorAll('video, canvas, a-scene, .arjs-loader').forEach(el => el.remove());
+      restoreBodyStyles();
+      
+      // navigate('/paises', { replace: true });
+    window.location.href = '/paises'; // Fuerza recarga completa
+    }, 100);
   };
 
-  const getVideoFilter = () => {
-    switch (selectedFilter) {
-      case 1: return 'none';
-      case 2: return 'sepia(1)';
-      case 3: return 'grayscale(1)';
-      case 4: return 'sepia(0.5) contrast(1.2) brightness(0.9)';
-      default: return 'none';
-    }
-  };
-
-  // Mostrar loading mientras verificamos
   if (isLoading) {
     return (
       <div className="ar-container">
@@ -344,32 +351,17 @@ function ARPage() {
     );
   }
 
-  // Si no hay país activo, no renderizar nada
   if (!paisActual || !triviaData) {
     return null;
   }
 
   return (
     <div className="ar-container">
-      {/* Video de la cámara en el fondo */}
-      <video
-        ref={cameraRef}
-        className="ar-camera-feed"
-        autoPlay
-        playsInline
-        muted
-      />
-      
-      {/* Overlay oscuro semitransparente sobre la cámara para mejor contraste */}
-      <div className="ar-camera-overlay"></div>
-
-      {/* MODELO 3D DEL PAÍS */}
       <ARModel pais={paisActual} />
 
-      {/* Mensaje de error de cámara si existe */}
-      {cameraError && (
+      {arError && (
         <div className="ar-camera-error">
-          {cameraError}
+          {arError}
           <button 
             onClick={() => window.location.reload()} 
             style={{
@@ -390,20 +382,22 @@ function ARPage() {
         </div>
       )}
 
-      {/* Botón de regreso */}
+      <div className="ar-help-message">
+        Apunta la cámara al marcador Hiro para ver el modelo 3D
+      </div>
+
       <button 
         className="ar-back-button"
         onClick={handleBackClick}
+        aria-label="Volver a países"
       >
         ←
       </button>
 
-      {/* Mostrar país actual */}
       <div className="ar-pais-indicator">
         {paisActual}
       </div>
 
-      {/* Botones flotantes horizontal */}
       <div className="ar-buttons-container">
         <button 
           className="ar-action-button"
@@ -423,7 +417,6 @@ function ARPage() {
         </button>
       </div>
 
-      {/* Modal de Trivia personalizado por país */}
       {showTriviaModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -471,7 +464,6 @@ function ARPage() {
         </div>
       )}
 
-      {/* Modal de Video con reproductor nativo */}
       {showVideoModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -481,18 +473,16 @@ function ARPage() {
             
             <div className="modal-card">
               <div className="modal-body">
-                {/* Video del país con controles nativos */}
                 <div className="video-container">
                   <video
                     ref={videoRef}
                     src={getVideoSrc(paisActual)}
-                    className="video-player"
+                    className={`video-player filter-${getFilterClassName()}`}
                     style={{
                       width: '100%',
                       height: 'auto',
                       maxHeight: '400px',
-                      borderRadius: '12px',
-                      filter: getVideoFilter()
+                      borderRadius: '12px'
                     }}
                     controls
                     autoPlay

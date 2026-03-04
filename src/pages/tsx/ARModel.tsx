@@ -6,13 +6,12 @@ interface ARModelProps {
 
 function ARModel({ pais }: ARModelProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const sceneElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!sceneRef.current) return;
 
-    // Esperar un poco para asegurar que A-Frame está cargado
     const timer = setTimeout(() => {
-      // Verificar que A-Frame está disponible
       if (typeof window === 'undefined' || !window.AFRAME) {
         console.error('A-Frame no está cargado');
         return;
@@ -31,7 +30,7 @@ function ARModel({ pais }: ARModelProps) {
         'URUGUAY': 'uruguay'
       };
 
-      // Colores por país (fallback si no hay modelo)
+      // Colores por país (para el cubo de respaldo)
       const coloresPorPais: Record<string, string> = {
         'MÉXICO': '#ce1126',
         'SUDÁFRICA': '#007a4d',
@@ -46,9 +45,6 @@ function ARModel({ pais }: ARModelProps) {
 
       const color = coloresPorPais[pais] || '#ffffff';
       const nombreModelo = mapaModelos[pais];
-      
-      // Ruta del modelo (ajusta según donde tengas tus archivos)
-      // Si están en public/modelos/
       const rutaModelo = `/modelos/${nombreModelo}.glb`;
 
       // Limpiar el contenedor
@@ -56,128 +52,178 @@ function ARModel({ pais }: ARModelProps) {
         sceneRef.current.innerHTML = '';
       }
 
-      // Crear escena A-Frame
+      // Crear la escena AR.js
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
       scene.setAttribute('vr-mode-ui', 'enabled: false');
-      scene.style.position = 'absolute';
+      scene.setAttribute('renderer', 'logarithmicDepthBuffer: true; alpha: true; antialias: true; colorManagement: true;');
+      scene.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;');
+      scene.style.position = 'fixed';
       scene.style.top = '0';
       scene.style.left = '0';
-      scene.style.width = '100%';
-      scene.style.height = '100%';
-      scene.style.zIndex = '5';
+      scene.style.width = '100vw';
+      scene.style.height = '100vh';
+      scene.style.zIndex = '2';
+      scene.style.background = 'transparent';
+      scene.style.margin = '0';
+      scene.style.padding = '0';
       scene.style.pointerEvents = 'none';
 
-      // Cámara
-      const camera = document.createElement('a-camera');
-      camera.setAttribute('position', '0 1.6 2');
-      camera.setAttribute('look-controls', 'enabled: false');
-      scene.appendChild(camera);
+      // Crear el marcador Hiro
+      const marker = document.createElement('a-marker');
+      marker.setAttribute('preset', 'hiro');
+      marker.setAttribute('id', 'marker-hiro');
+      marker.setAttribute('smooth', 'true');
+      marker.setAttribute('smoothCount', '5');
 
-      // Crear grupo para el modelo
-      const group = document.createElement('a-entity');
-      group.setAttribute('position', '0 1 -1.5');
-      
-      // Intentar cargar modelo GLB
+      // Entidad para el modelo 3D
       const modelEntity = document.createElement('a-entity');
-      
-      // Verificar si existe el modelo (intentamos cargarlo)
+      modelEntity.setAttribute('id', 'modelo-3d');
+      modelEntity.setAttribute('position', '0 0 0');
+      modelEntity.setAttribute('scale', '0.1 0.1 0.1');
+      modelEntity.setAttribute('visible', 'false');
+
+      // Cubo de respaldo (visible por defecto hasta que se cargue el modelo)
+      const fallbackCube = document.createElement('a-box');
+      fallbackCube.setAttribute('id', 'cubo-respaldo');
+      fallbackCube.setAttribute('position', '0 0.5 0');
+      fallbackCube.setAttribute('rotation', '0 45 0');
+      fallbackCube.setAttribute('width', '1');
+      fallbackCube.setAttribute('height', '1');
+      fallbackCube.setAttribute('depth', '1');
+      fallbackCube.setAttribute('color', color);
+      fallbackCube.setAttribute('material', `color: ${color}; roughness: 0.3; metalness: 0.1;`);
+      fallbackCube.setAttribute('visible', 'true');
+
+      // Animación de rotación para el cubo
+      fallbackCube.setAttribute('animation', 'property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear');
+
+      // Intentar cargar el modelo GLB
       fetch(rutaModelo)
         .then(response => {
           if (response.ok) {
-            // Modelo existe, lo cargamos
             modelEntity.setAttribute('gltf-model', rutaModelo);
             modelEntity.setAttribute('scale', '0.1 0.1 0.1');
+            
+            modelEntity.addEventListener('model-loaded', () => {
+              console.log('Modelo cargado correctamente');
+              fallbackCube.setAttribute('visible', 'false');
+              modelEntity.setAttribute('visible', 'true');
+            });
+
+            modelEntity.addEventListener('model-error', () => {
+              console.log('Error al cargar modelo, manteniendo cubo de respaldo');
+              modelEntity.setAttribute('visible', 'false');
+              fallbackCube.setAttribute('visible', 'true');
+            });
+
             console.log(`Cargando modelo: ${rutaModelo}`);
           } else {
-            // Modelo no existe, usar esfera de respaldo
-            console.log(`Modelo no encontrado: ${rutaModelo}, usando esfera de respaldo`);
-            useFallbackSphere(modelEntity, color);
+            console.log(`Modelo no encontrado: ${rutaModelo}, usando cubo de respaldo`);
           }
         })
         .catch(() => {
-          // Error al cargar, usar respaldo
-          console.log(`Error al cargar modelo, usando esfera de respaldo`);
-          useFallbackSphere(modelEntity, color);
+          console.log(`Error al verificar modelo, usando cubo de respaldo`);
         });
 
-      // Función para crear esfera de respaldo
-      const useFallbackSphere = (entity: HTMLElement, color: string) => {
-        entity.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
-        entity.setAttribute('material', `color: ${color}; roughness: 0.3; metalness: 0.1; emissive: ${color}; emissive-intensity: 0.2`);
-        
-        // Agregar hexágonos blancos
-        for (let i = 0; i < 12; i++) {
-          const hexagon = document.createElement('a-cylinder');
-          hexagon.setAttribute('radius', '0.15');
-          hexagon.setAttribute('height', '0.05');
-          hexagon.setAttribute('segments-radial', '6');
-          hexagon.setAttribute('color', '#ffffff');
-          hexagon.setAttribute('metalness', '0.3');
-          hexagon.setAttribute('roughness', '0.4');
-          
-          const theta = (i / 12) * Math.PI * 2;
-          const phi = Math.acos(2 * (i / 12) - 1);
-          
-          const x = 0.55 * Math.sin(phi) * Math.cos(theta);
-          const y = 0.55 * Math.sin(phi) * Math.sin(theta);
-          const z = 0.55 * Math.cos(phi);
-          
-          hexagon.setAttribute('position', `${x} ${y} ${z}`);
-          
-          const rotX = (phi * 180 / Math.PI) - 90;
-          const rotY = theta * 180 / Math.PI;
-          hexagon.setAttribute('rotation', `${rotX} ${rotY} 0`);
-          
-          entity.appendChild(hexagon);
-        }
-      };
+      // Agregar elementos al marcador
+      marker.appendChild(modelEntity);
+      marker.appendChild(fallbackCube);
 
-      // Rotación automática
-      group.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear');
-      
-      group.appendChild(modelEntity);
-      scene.appendChild(group);
+      // Eventos del marcador
+      marker.addEventListener('markerFound', () => {
+        console.log('Marcador Hiro detectado');
+      });
+
+      marker.addEventListener('markerLost', () => {
+        console.log('Marcador Hiro perdido');
+      });
+
+      // Cámara
+      const camera = document.createElement('a-entity');
+      camera.setAttribute('camera', '');
 
       // Luces
       const ambientLight = document.createElement('a-light');
       ambientLight.setAttribute('type', 'ambient');
       ambientLight.setAttribute('color', '#fff');
       ambientLight.setAttribute('intensity', '0.5');
-      scene.appendChild(ambientLight);
 
       const directionalLight = document.createElement('a-light');
       directionalLight.setAttribute('type', 'directional');
       directionalLight.setAttribute('color', '#fff');
       directionalLight.setAttribute('intensity', '1');
       directionalLight.setAttribute('position', '1 1 1');
+
+      // Ensamblar la escena
+      scene.appendChild(marker);
+      scene.appendChild(camera);
+      scene.appendChild(ambientLight);
       scene.appendChild(directionalLight);
 
-      // Agregar la escena al contenedor
       if (sceneRef.current) {
         sceneRef.current.appendChild(scene);
+        sceneElementRef.current = scene;
       }
-    }, 500);
 
+    }, 1000);
+
+    // Función de limpieza para detener la cámara de AR.js
     return () => {
       clearTimeout(timer);
+      
+      // Detener el stream de video de AR.js
+      if (sceneElementRef.current) {
+        // Obtener el sistema ARjs de la escena
+        const arjsSystem = (sceneElementRef.current as any).systems?.arjs;
+        if (arjsSystem && arjsSystem._arSession) {
+          try {
+            // Detener la sesión AR
+            arjsSystem._arSession.stop();
+          } catch (e) {
+            console.log('Error al detener sesión AR:', e);
+          }
+        }
+        
+        // Alternativa: buscar y detener el video creado por AR.js
+        const videoElement = document.querySelector('video');
+        if (videoElement && videoElement.srcObject) {
+          const stream = videoElement.srcObject as MediaStream;
+          if (stream) {
+            stream.getTracks().forEach(track => {
+              track.stop();
+              console.log('Track de video detenido');
+            });
+          }
+          videoElement.srcObject = null;
+        }
+      }
+
+      // Limpiar el DOM
       if (sceneRef.current) {
         sceneRef.current.innerHTML = '';
       }
+      
+      sceneElementRef.current = null;
     };
   }, [pais]);
 
   return (
     <div
       ref={sceneRef}
+      data-ar-model="true"
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 5,
-        pointerEvents: 'none'
+        width: '100vw',
+        height: '100vh',
+        zIndex: 2,
+        overflow: 'hidden',
+        background: 'transparent',
+        pointerEvents: 'none',
+        margin: 0,
+        padding: 0
       }}
     />
   );

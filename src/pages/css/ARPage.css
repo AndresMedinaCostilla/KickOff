@@ -1,99 +1,152 @@
-/* ARPage.css - Versión con cámara y sin scroll SOLO en ARPage */
+/* ARPage.css - Estilos solo activos durante sesión AR */
 
-/* Estos estilos SOLO aplican cuando estás en ARPage */
+/* Estilos aplicados al body SOLO cuando AR está activo */
+body.ar-active {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+/* Estilos aplicados al html SOLO cuando AR está activo */
+html:has(body.ar-active) {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
 .ar-container {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  background-color: #000;
+  background-color: transparent;
   z-index: 1000;
+  margin: 0;
+  padding: 0;
+  display: block;
 }
 
-/* Para asegurar que el body no herede el fixed de ARPage */
-body:has(.ar-container) {
-  overflow: hidden;
+/* Ocultar elementos de debug de AR.js pero NO el video */
+.a-enter-vr-button,
+.arjs-loader,
+.a-orientation-modal,
+.a-modal {
+  display: none !important;
 }
 
-/* Video de la cámara */
-.ar-camera-feed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 1;
-  transform: scaleX(-1);
+/* CORRECCIÓN: Video de AR.js ocupa toda la pantalla SIN franjas */
+body.ar-active video:not(.video-player) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+  z-index: 0 !important;
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
   background-color: #000;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 
-/* Overlay para mejor contraste */
-.ar-camera-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.15);
-  z-index: 2;
-  pointer-events: none;
+/* Canvas de A-Frame encima del video */
+body.ar-active .a-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
 }
 
-/* Botón de regreso */
+/* Escena de A-Frame con fondo transparente */
+body.ar-active a-scene {
+  background: transparent !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Botón de regreso - Siempre visible y clickeable */
 .ar-back-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 45px;
-  height: 45px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  z-index: 100;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  z-index: 10000 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  pointer-events: auto !important;
 }
 
 .ar-back-button:hover {
-  transform: scale(1.05);
-  background: white;
+  transform: scale(1.1) !important;
+  background: white !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.ar-back-button:active {
+  transform: scale(0.95) !important;
 }
 
 /* Indicador de país */
 .ar-pais-indicator {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
-  z-index: 100;
+  z-index: 10000;
   font-size: 0.9rem;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none;
 }
 
 /* Contenedor de botones flotantes */
 .ar-buttons-container {
-  position: absolute;
+  position: fixed;
   bottom: 30px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   gap: 20px;
-  z-index: 100;
+  z-index: 10000;
   padding: 0 20px;
+  pointer-events: none;
 }
 
 /* Botones de acción */
@@ -113,22 +166,44 @@ body:has(.ar-container) {
   min-width: 150px;
   text-transform: uppercase;
   backdrop-filter: blur(5px);
-  background-color: rgba(42, 90, 157, 0.9);
+  background-color: rgba(42, 90, 157, 0.95);
+  pointer-events: auto;
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .ar-action-button:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  background-color: rgba(26, 58, 109, 0.95);
+  background-color: rgba(26, 58, 109, 0.98);
 }
 
 .ar-action-button:active {
   transform: translateY(0);
 }
 
-/* Mensaje de error de cámara */
+/* Mensaje de ayuda AR */
+.ar-help-message {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 20px;
+  z-index: 10000;
+  font-size: 0.9rem;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 80%;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Mensaje de error */
 .ar-camera-error {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -136,18 +211,19 @@ body:has(.ar-container) {
   color: white;
   padding: 30px;
   border-radius: 20px;
-  z-index: 200;
+  z-index: 20000;
   text-align: center;
   font-size: 1.1rem;
   max-width: 80%;
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
 }
 
 /* Modal overlay */
 .modal-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -156,9 +232,10 @@ body:has(.ar-container) {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 20000;
   padding: 20px;
   animation: fadeIn 0.2s ease-out;
+  pointer-events: auto;
 }
 
 /* Modal content */
@@ -167,6 +244,7 @@ body:has(.ar-container) {
   max-width: 500px;
   width: 100%;
   animation: slideUp 0.3s ease-out;
+  pointer-events: auto;
 }
 
 /* Tarjeta blanca */
@@ -290,13 +368,15 @@ body:has(.ar-container) {
   white-space: nowrap;
 }
 
-/* Video */
+/* Video del modal */
 .video-container {
   margin: 8px 16px 4px 16px;
   border-radius: 20px;
   overflow: hidden;
   background-color: #000;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
 }
 
 .video-player {
@@ -307,9 +387,29 @@ body:has(.ar-container) {
   object-fit: contain;
   background-color: #000;
   transition: filter 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  position: relative;
 }
 
-/* Filtros */
+/* Filtros para video del modal */
+.video-player.filter-normal {
+  filter: none !important;
+}
+
+.video-player.filter-sepia {
+  filter: sepia(1) !important;
+}
+
+.video-player.filter-bw {
+  filter: grayscale(1) !important;
+}
+
+.video-player.filter-vintage {
+  filter: sepia(0.5) contrast(1.2) brightness(0.9) !important;
+}
+
+/* Título de filtros */
 .filters-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -319,6 +419,7 @@ body:has(.ar-container) {
   letter-spacing: 0.5px;
 }
 
+/* Contenedor de filtros */
 .filters-container {
   display: flex;
   flex-wrap: wrap;
@@ -384,22 +485,28 @@ body:has(.ar-container) {
     border-radius: 10px;
   }
   
+  .ar-help-message {
+    font-size: 0.8rem;
+    padding: 10px 20px;
+    white-space: normal;
+  }
+  
   .modal-card {
     border-radius: 24px;
   }
   
   .modal-body {
-    padding: 32px 24px !important;
+    padding: 32px 24px;
     gap: 28px;
   }
   
   .modal-question {
     font-size: 1.15rem;
-    margin: 0 12px !important;
+    margin: 0 12px;
   }
   
   .options-container {
-    margin: 0 12px !important;
+    margin: 0 12px;
     gap: 14px;
   }
   
@@ -423,12 +530,12 @@ body:has(.ar-container) {
   
   .filters-title {
     font-size: 1.15rem;
-    margin: 16px 16px 12px 16px !important;
+    margin: 16px 16px 12px 16px;
   }
   
   .filters-container {
     gap: 10px;
-    margin: 8px 16px 16px 16px !important;
+    margin: 8px 16px 16px 16px;
     justify-content: center;
   }
   
@@ -439,7 +546,7 @@ body:has(.ar-container) {
   }
   
   .video-container {
-    margin: 8px 16px 4px 16px !important;
+    margin: 8px 16px 4px 16px;
   }
   
   .video-player {
@@ -460,4 +567,29 @@ body:has(.ar-container) {
   .filter-chip:active {
     background-color: #e9ecef;
   }
+}
+
+/* ============================================
+   RESET FORZADO AL SALIR DE AR - NUEVO
+   ============================================ */
+
+/* Reset forzado al salir de AR */
+body:not(.ar-active) {
+  overflow: visible !important;
+  height: auto !important;
+  position: static !important;
+  width: auto !important;
+}
+
+html:not(:has(body.ar-active)) {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* Asegurar que el root vuelva a la normalidad */
+body:not(.ar-active) #root {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
 }
