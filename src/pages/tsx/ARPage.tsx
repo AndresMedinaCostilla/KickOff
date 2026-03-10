@@ -114,6 +114,7 @@ function ARPage() {
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [arError, setArError] = useState<string | null>(null);
+  const [showInfoMessage, setShowInfoMessage] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isNavigatingRef = useRef(false);
 
@@ -251,6 +252,18 @@ function ARPage() {
     };
   }, [navigate]);
 
+  const handleInfoClick = () => {
+  console.log('Botón de información clickeado para:', paisActual);
+  setShowInfoMessage(true);
+  
+  // Aquí irá la reproducción de audio cuando la tengas
+  // Por ahora solo muestra un mensaje y lo oculta después de 2 segundos
+  
+  setTimeout(() => {
+    setShowInfoMessage(false);
+  }, 2000);
+};
+
   const getVideoSrc = (pais: string | null): string => {
     if (!pais) return '';
     
@@ -357,7 +370,23 @@ function ARPage() {
 
   return (
     <div className="ar-container">
-      <ARModel pais={paisActual} />
+      <ARModel pais={paisActual} onInfoClick={handleInfoClick} />
+
+      {showInfoMessage && (
+  <div style={{
+    position: 'fixed',
+    bottom: '180px',
+    right: '20px',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    color: 'white',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    zIndex: 1001,
+    fontSize: '0.9rem'
+  }}>
+    Audio disponible próximamente
+  </div>
+)}
 
       {arError && (
         <div className="ar-camera-error">

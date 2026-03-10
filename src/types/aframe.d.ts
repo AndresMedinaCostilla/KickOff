@@ -15,6 +15,7 @@ declare namespace JSX {
     'a-plane': any;
     'a-sky': any;
     'a-text': any;
+    'a-tetrahedron': any; // <--- AÑADE ESTA LÍNEA
   }
 }
 

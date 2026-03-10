@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ARModelProps {
   pais: string;
+  onInfoClick?: () => void;
 }
 
-function ARModel({ pais }: ARModelProps) {
+function ARModel({ pais, onInfoClick }: ARModelProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const sceneElementRef = useRef<HTMLElement | null>(null);
+  const [modeloCargado, setModeloCargado] = useState(false);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -56,7 +58,7 @@ function ARModel({ pais }: ARModelProps) {
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
       scene.setAttribute('vr-mode-ui', 'enabled: false');
-      scene.setAttribute('renderer', 'logarithmicDepthBuffer: true; alpha: true; antialias: true; colorManagement: true;');
+      scene.setAttribute('renderer', 'logarithmicDepthBuffer: true; alpha: true; antialias: true; colorManagement: true; exposure: 2.0');
       scene.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;');
       scene.style.position = 'fixed';
       scene.style.top = '0';
@@ -65,8 +67,6 @@ function ARModel({ pais }: ARModelProps) {
       scene.style.height = '100vh';
       scene.style.zIndex = '2';
       scene.style.background = 'transparent';
-      scene.style.margin = '0';
-      scene.style.padding = '0';
       scene.style.pointerEvents = 'none';
 
       // Crear el marcador Hiro
@@ -83,83 +83,127 @@ function ARModel({ pais }: ARModelProps) {
       modelEntity.setAttribute('scale', '0.1 0.1 0.1');
       modelEntity.setAttribute('visible', 'false');
 
-      // Cubo de respaldo (visible por defecto hasta que se cargue el modelo)
-      const fallbackCube = document.createElement('a-box');
-      fallbackCube.setAttribute('id', 'cubo-respaldo');
-      fallbackCube.setAttribute('position', '0 0.5 0');
-      fallbackCube.setAttribute('rotation', '0 45 0');
-      fallbackCube.setAttribute('width', '1');
-      fallbackCube.setAttribute('height', '1');
-      fallbackCube.setAttribute('depth', '1');
-      fallbackCube.setAttribute('color', color);
-      fallbackCube.setAttribute('material', `color: ${color}; roughness: 0.3; metalness: 0.1;`);
-      fallbackCube.setAttribute('visible', 'true');
+      // ========== ILUMINACIÓN ==========
+      
+      // Luz ambiental
+      const ambientLight = document.createElement('a-light');
+      ambientLight.setAttribute('type', 'ambient');
+      ambientLight.setAttribute('color', '#ffffff');
+      ambientLight.setAttribute('intensity', '2.5');
+      
+      // Luces direccionales
+      const lightPositions = [
+        [2, 3, 2], [-2, 3, -2], [2, 1, -2],
+        [-2, 1, 2], [0, 4, 0], [0, 0, 3]
+      ];
 
-      // Animación de rotación para el cubo
-      fallbackCube.setAttribute('animation', 'property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear');
+      lightPositions.forEach((pos) => {
+        const light = document.createElement('a-light');
+        light.setAttribute('type', 'directional');
+        light.setAttribute('color', '#ffffff');
+        light.setAttribute('intensity', '1.2');
+        light.setAttribute('position', `${pos[0]} ${pos[1]} ${pos[2]}`);
+        scene.appendChild(light);
+      });
+
+      // ========== GRUPO DE CARGA CON ELEMENTOS VISIBLES ==========
+      
+      const loadingGroup = document.createElement('a-entity');
+      loadingGroup.setAttribute('id', 'loading-group');
+      loadingGroup.setAttribute('position', '0 0 0');
+      
+      // 1. Cubo principal (gigante y brillante)
+      const mainCube = document.createElement('a-box');
+      mainCube.setAttribute('position', '0 0.5 0');
+      mainCube.setAttribute('rotation', '0 45 0');
+      mainCube.setAttribute('width', '1.2');
+      mainCube.setAttribute('height', '1.2');
+      mainCube.setAttribute('depth', '1.2');
+      mainCube.setAttribute('color', color);
+      mainCube.setAttribute('material', `color: ${color}; roughness: 0.2; metalness: 0.1; emissive: ${color}; emissiveIntensity: 0.8`);
+      mainCube.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear');
+      loadingGroup.appendChild(mainCube);
+
+      // 2. ESFERAS GIGANTES ALREDEDOR (partículas visibles)
+      const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
+      
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 2.0;
+        
+        const sphere = document.createElement('a-sphere');
+        sphere.setAttribute('radius', '0.4');
+        sphere.setAttribute('color', colors[i % colors.length]);
+        sphere.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 2.0');
+        sphere.setAttribute('position', `${Math.cos(angle) * radius} ${Math.sin(angle) * 0.5 + 0.5} ${Math.sin(angle) * radius}`);
+        
+        // Animación de movimiento
+        sphere.setAttribute('animation', `property: position; to: ${Math.cos(angle + 0.2) * radius} ${Math.sin(angle + 0.2) * 0.5 + 0.5} ${Math.sin(angle + 0.2) * radius}; loop: true; dur: 2000; easing: easeInOutSine`);
+        
+        loadingGroup.appendChild(sphere);
+      }
+
+      // 3. TORRES DE LUCES (cilindros brillantes)
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = 1.5;
+        
+        const pillar = document.createElement('a-cylinder');
+        pillar.setAttribute('radius', '0.15');
+        pillar.setAttribute('height', '1.0');
+        pillar.setAttribute('color', '#FFFFFF');
+        pillar.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 3.0');
+        pillar.setAttribute('position', `${Math.cos(angle) * radius} 0.8 ${Math.sin(angle) * radius}`);
+        
+        loadingGroup.appendChild(pillar);
+      }
+
+      // 4. TEXTO DE CARGA (para confirmar que algo está pasando)
+      const loadingText = document.createElement('a-text');
+      loadingText.setAttribute('value', 'Cargando...');
+      loadingText.setAttribute('color', '#FFFFFF');
+      loadingText.setAttribute('position', '0 2 -1');
+      loadingText.setAttribute('scale', '1 1 1');
+      loadingText.setAttribute('align', 'center');
+      loadingText.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 1.0');
+      loadingGroup.appendChild(loadingText);
+
+      marker.appendChild(loadingGroup);
 
       // Intentar cargar el modelo GLB
       fetch(rutaModelo)
         .then(response => {
           if (response.ok) {
             modelEntity.setAttribute('gltf-model', rutaModelo);
-            modelEntity.setAttribute('scale', '0.1 0.1 0.1');
+            modelEntity.setAttribute('scale', '0.15 0.15 0.15');
             
             modelEntity.addEventListener('model-loaded', () => {
               console.log('Modelo cargado correctamente');
-              fallbackCube.setAttribute('visible', 'false');
+              setModeloCargado(true);
+              loadingGroup.setAttribute('visible', 'false');
               modelEntity.setAttribute('visible', 'true');
+              modelEntity.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear');
             });
 
             modelEntity.addEventListener('model-error', () => {
-              console.log('Error al cargar modelo, manteniendo cubo de respaldo');
-              modelEntity.setAttribute('visible', 'false');
-              fallbackCube.setAttribute('visible', 'true');
+              console.log('Error al cargar modelo');
             });
-
-            console.log(`Cargando modelo: ${rutaModelo}`);
-          } else {
-            console.log(`Modelo no encontrado: ${rutaModelo}, usando cubo de respaldo`);
           }
         })
         .catch(() => {
-          console.log(`Error al verificar modelo, usando cubo de respaldo`);
+          console.log('Error al verificar modelo');
         });
 
-      // Agregar elementos al marcador
       marker.appendChild(modelEntity);
-      marker.appendChild(fallbackCube);
-
-      // Eventos del marcador
-      marker.addEventListener('markerFound', () => {
-        console.log('Marcador Hiro detectado');
-      });
-
-      marker.addEventListener('markerLost', () => {
-        console.log('Marcador Hiro perdido');
-      });
 
       // Cámara
       const camera = document.createElement('a-entity');
       camera.setAttribute('camera', '');
 
-      // Luces
-      const ambientLight = document.createElement('a-light');
-      ambientLight.setAttribute('type', 'ambient');
-      ambientLight.setAttribute('color', '#fff');
-      ambientLight.setAttribute('intensity', '0.5');
-
-      const directionalLight = document.createElement('a-light');
-      directionalLight.setAttribute('type', 'directional');
-      directionalLight.setAttribute('color', '#fff');
-      directionalLight.setAttribute('intensity', '1');
-      directionalLight.setAttribute('position', '1 1 1');
-
-      // Ensamblar la escena
+      // Ensamblar escena
       scene.appendChild(marker);
       scene.appendChild(camera);
       scene.appendChild(ambientLight);
-      scene.appendChild(directionalLight);
 
       if (sceneRef.current) {
         sceneRef.current.appendChild(scene);
@@ -168,64 +212,113 @@ function ARModel({ pais }: ARModelProps) {
 
     }, 1000);
 
-    // Función de limpieza para detener la cámara de AR.js
     return () => {
       clearTimeout(timer);
       
-      // Detener el stream de video de AR.js
       if (sceneElementRef.current) {
-        // Obtener el sistema ARjs de la escena
         const arjsSystem = (sceneElementRef.current as any).systems?.arjs;
         if (arjsSystem && arjsSystem._arSession) {
           try {
-            // Detener la sesión AR
             arjsSystem._arSession.stop();
           } catch (e) {
             console.log('Error al detener sesión AR:', e);
           }
         }
         
-        // Alternativa: buscar y detener el video creado por AR.js
         const videoElement = document.querySelector('video');
         if (videoElement && videoElement.srcObject) {
           const stream = videoElement.srcObject as MediaStream;
-          if (stream) {
-            stream.getTracks().forEach(track => {
-              track.stop();
-              console.log('Track de video detenido');
-            });
-          }
+          stream.getTracks().forEach(track => track.stop());
           videoElement.srcObject = null;
         }
       }
 
-      // Limpiar el DOM
       if (sceneRef.current) {
         sceneRef.current.innerHTML = '';
       }
       
       sceneElementRef.current = null;
+      setModeloCargado(false);
     };
   }, [pais]);
 
   return (
-    <div
-      ref={sceneRef}
-      data-ar-model="true"
-      style={{
+    <>
+      {/* Frame delimitador */}
+      <div style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 2,
-        overflow: 'hidden',
-        background: 'transparent',
-        pointerEvents: 'none',
-        margin: 0,
-        padding: 0
-      }}
-    />
+        top: '15%',
+        left: '15%',
+        width: '70%',
+        height: '60%',
+        border: '3px solid rgba(255, 255, 255, 0.7)',
+        borderRadius: '20px',
+        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
+        zIndex: 10,
+        pointerEvents: 'none'
+      }}>
+        {/* Esquinas decorativas */}
+        <div style={{ position: 'absolute', top: -2, left: -2, width: '30px', height: '30px', borderTop: '4px solid white', borderLeft: '4px solid white', borderRadius: '10px 0 0 0' }}></div>
+        <div style={{ position: 'absolute', top: -2, right: -2, width: '30px', height: '30px', borderTop: '4px solid white', borderRight: '4px solid white', borderRadius: '0 10px 0 0' }}></div>
+        <div style={{ position: 'absolute', bottom: -2, left: -2, width: '30px', height: '30px', borderBottom: '4px solid white', borderLeft: '4px solid white', borderRadius: '0 0 0 10px' }}></div>
+        <div style={{ position: 'absolute', bottom: -2, right: -2, width: '30px', height: '30px', borderBottom: '4px solid white', borderRight: '4px solid white', borderRadius: '0 0 10px 0' }}></div>
+      </div>
+
+      <div
+        ref={sceneRef}
+        data-ar-model="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 2,
+          overflow: 'hidden',
+          background: 'transparent',
+          pointerEvents: 'none',
+          margin: 0,
+          padding: 0
+        }}
+      />
+      
+      {/* Botón de información */}
+      {modeloCargado && (
+        <button
+          onClick={onInfoClick}
+          style={{
+            position: 'fixed',
+            bottom: '18%',
+            right: '18%',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            backgroundColor: '#6c757d',
+            color: 'white',
+            border: '2px solid white',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            zIndex: 1000,
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#5a6268';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#6c757d';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          i
+        </button>
+      )}
+    </>
   );
 }
 
