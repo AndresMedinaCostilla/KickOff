@@ -8,7 +8,10 @@ interface ARModelProps {
 function ARModel({ pais, onInfoClick }: ARModelProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const sceneElementRef = useRef<HTMLElement | null>(null);
+  const modelEntityRef = useRef<HTMLElement | null>(null);
+  const particlesEntityRef = useRef<HTMLElement | null>(null);
   const [modeloCargado, setModeloCargado] = useState(false);
+  const [infoModeActive, setInfoModeActive] = useState(false);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -82,6 +85,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       modelEntity.setAttribute('position', '0 0 0');
       modelEntity.setAttribute('scale', '0.1 0.1 0.1');
       modelEntity.setAttribute('visible', 'false');
+      modelEntityRef.current = modelEntity;
 
       // ========== ILUMINACIÓN ==========
       
@@ -170,6 +174,76 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
 
       marker.appendChild(loadingGroup);
 
+      // ========== SISTEMA DE PARTÍCULAS PARA MODO INFO ==========
+      const particlesGroup = document.createElement('a-entity');
+      particlesGroup.setAttribute('id', 'particles-group');
+      particlesGroup.setAttribute('position', '0 0 0');
+      particlesGroup.setAttribute('visible', 'false');
+      particlesEntityRef.current = particlesGroup;
+
+      // Crear partículas orbitando alrededor del modelo
+      const particleColors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+      
+      for (let i = 0; i < 20; i++) {
+        const angle = (i / 20) * Math.PI * 2;
+        const radius = 1.2 + Math.random() * 0.5;
+        const height = 0.3 + Math.random() * 1.0;
+        const orbitDuration = 3000 + Math.random() * 2000;
+        
+        const particle = document.createElement('a-sphere');
+        particle.setAttribute('radius', '0.08');
+        particle.setAttribute('color', particleColors[i % particleColors.length]);
+        particle.setAttribute('material', `emissive: ${particleColors[i % particleColors.length]}; emissiveIntensity: 1.5; transparent: true; opacity: 0.9`);
+        
+        // Posición inicial
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        particle.setAttribute('position', `${x} ${height} ${z}`);
+        
+        // Animación de órbita
+        particle.setAttribute('animation', `
+          property: position;
+          to: ${Math.cos(angle + Math.PI * 2) * radius} ${height + 0.2} ${Math.sin(angle + Math.PI * 2) * radius};
+          loop: true;
+          dur: ${orbitDuration};
+          easing: linear
+        `);
+        
+        // Animación de escala pulsante
+        particle.setAttribute('animation__scale', `
+          property: scale;
+          to: 1.5 1.5 1.5;
+          dir: alternate;
+          loop: true;
+          dur: ${1000 + Math.random() * 1000};
+          easing: easeInOutSine
+        `);
+        
+        particlesGroup.appendChild(particle);
+      }
+
+      // Añadir líneas de conexión entre partículas (efecto de red)
+      for (let i = 0; i < 8; i++) {
+        const line = document.createElement('a-entity');
+        line.setAttribute('geometry', 'primitive: cylinder; radius: 0.02; height: 2');
+        line.setAttribute('material', `color: ${color}; transparent: true; opacity: 0.4; emissive: ${color}; emissiveIntensity: 0.5`);
+        line.setAttribute('position', '0 0.5 0');
+        line.setAttribute('rotation', `${Math.random() * 360} ${Math.random() * 360} ${Math.random() * 360}`);
+        
+        // Animación de rotación de líneas
+        line.setAttribute('animation', `
+          property: rotation;
+          to: ${Math.random() * 360 + 360} ${Math.random() * 360 + 360} ${Math.random() * 360 + 360};
+          loop: true;
+          dur: ${5000 + Math.random() * 5000};
+          easing: linear
+        `);
+        
+        particlesGroup.appendChild(line);
+      }
+
+      marker.appendChild(particlesGroup);
+
       // Intentar cargar el modelo GLB
       fetch(rutaModelo)
         .then(response => {
@@ -182,7 +256,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
               setModeloCargado(true);
               loadingGroup.setAttribute('visible', 'false');
               modelEntity.setAttribute('visible', 'true');
-              modelEntity.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear');
+              // NO agregamos animación de rotación aquí - solo al presionar info
             });
 
             modelEntity.addEventListener('model-error', () => {
@@ -238,9 +312,43 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       }
       
       sceneElementRef.current = null;
+      modelEntityRef.current = null;
+      particlesEntityRef.current = null;
       setModeloCargado(false);
     };
   }, [pais]);
+
+  // Función para manejar el click en información
+  const handleInfoButtonClick = () => {
+    if (!modelEntityRef.current) return;
+    
+    const newInfoMode = !infoModeActive;
+    setInfoModeActive(newInfoMode);
+    
+    if (newInfoMode) {
+      // Activar modo info: rotación y partículas
+      modelEntityRef.current.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear');
+      
+      // Mostrar partículas
+      if (particlesEntityRef.current) {
+        particlesEntityRef.current.setAttribute('visible', 'true');
+      }
+      
+      // Llamar al callback externo si existe
+      if (onInfoClick) {
+        onInfoClick();
+      }
+    } else {
+      // Desactivar modo info: detener rotación y ocultar partículas
+      modelEntityRef.current.removeAttribute('animation');
+      modelEntityRef.current.setAttribute('rotation', '0 0 0');
+      
+      // Ocultar partículas
+      if (particlesEntityRef.current) {
+        particlesEntityRef.current.setAttribute('visible', 'false');
+      }
+    }
+  };
 
   return (
     <>
@@ -285,39 +393,73 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       {/* Botón de información */}
       {modeloCargado && (
         <button
-          onClick={onInfoClick}
+          onClick={handleInfoButtonClick}
           style={{
             position: 'fixed',
             bottom: '18%',
             right: '18%',
-            width: '40px',
-            height: '40px',
+            width: '50px',
+            height: '50px',
             borderRadius: '50%',
-            backgroundColor: '#6c757d',
+            backgroundColor: infoModeActive ? '#28a745' : '#6c757d',
             color: 'white',
-            border: '2px solid white',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            border: '3px solid white',
+            boxShadow: infoModeActive 
+              ? '0 0 20px rgba(40, 167, 69, 0.8), 0 4px 12px rgba(0,0,0,0.3)' 
+              : '0 4px 12px rgba(0,0,0,0.3)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '20px',
+            fontSize: '24px',
             fontWeight: 'bold',
             cursor: 'pointer',
             zIndex: 1000,
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            transform: infoModeActive ? 'scale(1.1)' : 'scale(1)'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#5a6268';
-            e.currentTarget.style.transform = 'scale(1.1)';
+            if (!infoModeActive) {
+              e.currentTarget.style.backgroundColor = '#5a6268';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#6c757d';
-            e.currentTarget.style.transform = 'scale(1)';
+            if (!infoModeActive) {
+              e.currentTarget.style.backgroundColor = '#6c757d';
+              e.currentTarget.style.transform = 'scale(1)';
+            }
           }}
         >
           i
         </button>
       )}
+
+      {/* Indicador de modo info activo */}
+      {infoModeActive && (
+        <div style={{
+          position: 'fixed',
+          bottom: '25%',
+          right: '18%',
+          backgroundColor: 'rgba(40, 167, 69, 0.9)',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          zIndex: 999,
+          animation: 'pulse 2s infinite',
+          pointerEvents: 'none'
+        }}>
+          Modo Info Activo
+        </div>
+      )}
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.05); }
+        }
+      `}</style>
     </>
   );
 }
