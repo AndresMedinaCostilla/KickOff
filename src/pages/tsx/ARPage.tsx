@@ -114,8 +114,10 @@ function ARPage() {
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [arError, setArError] = useState<string | null>(null);
-  const [showInfoMessage, setShowInfoMessage] = useState(false);
+  const [/*showInfoMessage*/, setShowInfoMessage] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pixelAnimRef = useRef<number | null>(null);
   const isNavigatingRef = useRef(false);
 
   // RESTAURACIÓN COMPLETA - Función mejorada
@@ -156,7 +158,6 @@ function ARPage() {
 
   // LIMPIEZA AGRESIVA DE AR.JS
   const cleanupAR = () => {
-    console.log('Limpiando recursos AR...');
 
     // 1. Detener TODOS los tracks de medios
     document.querySelectorAll('video').forEach(video => {
@@ -213,7 +214,6 @@ function ARPage() {
   // VERIFICACIÓN INICIAL
   useEffect(() => {
     const pais = obtenerPaisActual();
-    console.log('País obtenido en ARPage:', pais);
     
     if (pais) {
       setPaisActual(pais);
@@ -253,7 +253,6 @@ function ARPage() {
   }, [navigate]);
 
   const handleInfoClick = () => {
-  console.log('Botón de información clickeado para:', paisActual);
   setShowInfoMessage(true);
   
   // Aquí irá la reproducción de audio cuando la tengas
@@ -284,22 +283,76 @@ function ARPage() {
   };
 
   const filterOptions = [
-    { id: 1, text: "Normal", value: "normal" },
-    { id: 2, text: "Sepia", value: "sepia" },
-    { id: 3, text: "Blanco & Negro", value: "bw" },
-    { id: 4, text: "Vintage", value: "vintage" }
+    { id: 1, text: "Normal",           value: "normal" },
+    { id: 2, text: "Desenfoque",       value: "blur" },
+    { id: 3, text: "Pixelado",         value: "pixelated" },
+    { id: 4, text: "Alta Saturación",  value: "saturate" }
   ];
 
-  // Función para obtener el nombre de la clase del filtro
-  const getFilterClassName = () => {
+  // Retorna la clase CSS del filtro seleccionado
+  const getFilterClass = (): string => {
     switch (selectedFilter) {
-      case 1: return 'normal';
-      case 2: return 'sepia';
-      case 3: return 'bw';
-      case 4: return 'vintage';
-      default: return 'normal';
+      case 2: return 'filter-blur';
+      case 4: return 'filter-saturate';
+      default: return '';
     }
   };
+
+  // Efecto canvas para pixelado real
+  useEffect(() => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    // Limpiar loop anterior
+    if (pixelAnimRef.current) {
+      cancelAnimationFrame(pixelAnimRef.current);
+      pixelAnimRef.current = null;
+    }
+
+    if (selectedFilter !== 3 || !video || !canvas) return;
+
+    const PIXEL_SIZE = 12; // tamaño de bloque en px — más grande = más pixelado
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const drawPixelated = () => {
+      if (!video || !canvas || video.paused || video.ended) {
+        pixelAnimRef.current = requestAnimationFrame(drawPixelated);
+        return;
+      }
+      const w = canvas.width;
+      const h = canvas.height;
+      const pw = Math.max(1, Math.floor(w / PIXEL_SIZE));
+      const ph = Math.max(1, Math.floor(h / PIXEL_SIZE));
+
+      ctx.imageSmoothingEnabled = false;
+      // Dibujar a baja resolución
+      ctx.drawImage(video, 0, 0, pw, ph);
+      // Escalar a tamaño completo sin suavizado → bloques visibles
+      ctx.drawImage(canvas, 0, 0, pw, ph, 0, 0, w, h);
+
+      pixelAnimRef.current = requestAnimationFrame(drawPixelated);
+    };
+
+    const syncSize = () => {
+      canvas.width = video.videoWidth || video.clientWidth || 320;
+      canvas.height = video.videoHeight || video.clientHeight || 180;
+    };
+
+    if (video.readyState >= 2) {
+      syncSize();
+      drawPixelated();
+    } else {
+      video.addEventListener('loadeddata', () => { syncSize(); drawPixelated(); }, { once: true });
+    }
+
+    return () => {
+      if (pixelAnimRef.current) {
+        cancelAnimationFrame(pixelAnimRef.current);
+        pixelAnimRef.current = null;
+      }
+    };
+  }, [selectedFilter, showVideoModal]);
 
   const closeModal = () => {
     setShowTriviaModal(false);
@@ -332,7 +385,6 @@ function ARPage() {
   };
 
   const handleBackClick = () => {
-    console.log('Volviendo a países, eliminando país');
     
     // Marcar navegación
     isNavigatingRef.current = true;
@@ -372,39 +424,14 @@ function ARPage() {
     <div className="ar-container">
       <ARModel pais={paisActual} onInfoClick={handleInfoClick} />
 
-      {showInfoMessage && (
-  <div style={{
-    position: 'fixed',
-    bottom: '180px',
-    right: '20px',
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    color: 'white',
-    padding: '10px 20px',
-    borderRadius: '8px',
-    zIndex: 1001,
-    fontSize: '0.9rem'
-  }}>
-    Audio disponible próximamente
-  </div>
-)}
+      
 
       {arError && (
         <div className="ar-camera-error">
           {arError}
           <button 
             onClick={() => window.location.reload()} 
-            style={{
-              marginTop: '15px',
-              padding: '10px 20px',
-              background: '#2a5a9d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              display: 'block',
-              marginLeft: 'auto',
-              marginRight: 'auto'
-            }}
+            className="ar-retry-button"
           >
             Reintentar
           </button>
@@ -412,7 +439,7 @@ function ARPage() {
       )}
 
       <div className="ar-help-message">
-        Apunta la cámara al marcador Hiro para ver el modelo 3D
+        Apunta la cámara al marcador para ver el modelo 3D
       </div>
 
       <button 
@@ -477,13 +504,7 @@ function ARPage() {
                     ))}
                   </div>
                 ) : (
-                  <div style={{
-                    textAlign: 'center',
-                    padding: '20px',
-                    fontSize: '1.3rem',
-                    fontWeight: 'bold',
-                    color: isCorrect ? '#28a745' : '#dc3545'
-                  }}>
+                  <div className={`trivia-result ${isCorrect ? 'trivia-result--correct' : 'trivia-result--incorrect'}`}>
                     {isCorrect ? '¡Correcto! ✓' : 'Incorrecto ✗'}
                   </div>
                 )}
@@ -502,17 +523,16 @@ function ARPage() {
             
             <div className="modal-card">
               <div className="modal-body">
-                <div className="video-container">
+                <div className={`video-container ${selectedFilter === 3 ? 'video-container--pixelated' : ''}`}>
+                  {/* Canvas overlay — solo visible con filtro pixelado */}
+                  <canvas
+                    ref={canvasRef}
+                    className={`video-pixel-canvas ${selectedFilter === 3 ? 'visible' : ''}`}
+                  />
                   <video
                     ref={videoRef}
                     src={getVideoSrc(paisActual)}
-                    className={`video-player filter-${getFilterClassName()}`}
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      maxHeight: '400px',
-                      borderRadius: '12px'
-                    }}
+                    className={`video-player ${getFilterClass()}`}
                     controls
                     autoPlay
                     loop

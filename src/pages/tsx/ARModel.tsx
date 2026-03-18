@@ -15,15 +15,12 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
   const [modeloCargado, setModeloCargado] = useState(false);
   const [infoModeActive, setInfoModeActive] = useState(false);
   const [marcadorDetectado, setMarcadorDetectado] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>('');
 
   useEffect(() => {
     if (!sceneRef.current) return;
 
     const timer = setTimeout(() => {
       if (typeof window === 'undefined' || !window.AFRAME) {
-        console.error('A-Frame no está cargado');
-        setDebugInfo('Error: A-Frame no cargado');
         return;
       }
 
@@ -40,20 +37,6 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         'URUGUAY': 'uruguay'
       };
 
-      // Colores por país (para el cubo de respaldo)
-      const coloresPorPais: Record<string, string> = {
-        'MÉXICO': '#ce1126',
-        'SUDÁFRICA': '#007a4d',
-        'COREA DEL SUR': '#cd2e3a',
-        'COLOMBIA': '#fcd116',
-        'UZBEKISTÁN': '#0099b5',
-        'TÚNEZ': '#e70013',
-        'JAPÓN': '#bc002d',
-        'ESPAÑA': '#aa1519',
-        'URUGUAY': '#0038a8'
-      };
-
-      const color = coloresPorPais[pais] || '#ffffff';
       const nombreModelo = mapaModelos[pais];
       const rutaModelo = `/modelos/${nombreModelo}.glb`;
 
@@ -68,7 +51,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       scene.setAttribute('vr-mode-ui', 'enabled: false');
       scene.setAttribute('renderer', 'logarithmicDepthBuffer: true; alpha: true; antialias: true; colorManagement: true; exposure: 2.0');
       // Importante: patternRatio 0.5 es el estándar para marcadores personalizados
-      scene.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: true; detectionMode: mono; patternRatio: 0.5; labelingMode: black_region;');
+      //scene.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: true; detectionMode: mono; patternRatio: 0.5; labelingMode: black_region;');
       scene.style.position = 'fixed';
       scene.style.top = '0';
       scene.style.left = '0';
@@ -84,63 +67,6 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         const loadingGroup = document.createElement('a-entity');
         loadingGroup.setAttribute('id', 'loading-group');
         loadingGroup.setAttribute('position', '0 0 0');
-        
-        // 1. Cubo principal (gigante y brillante)
-        const mainCube = document.createElement('a-box');
-        mainCube.setAttribute('position', '0 0.5 0');
-        mainCube.setAttribute('rotation', '0 45 0');
-        mainCube.setAttribute('width', '1.2');
-        mainCube.setAttribute('height', '1.2');
-        mainCube.setAttribute('depth', '1.2');
-        mainCube.setAttribute('color', color);
-        mainCube.setAttribute('material', `color: ${color}; roughness: 0.2; metalness: 0.1; emissive: ${color}; emissiveIntensity: 0.8`);
-        mainCube.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear');
-        loadingGroup.appendChild(mainCube);
-
-        // 2. ESFERAS GIGANTES ALREDEDOR (partículas visibles)
-        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
-        
-        for (let i = 0; i < 12; i++) {
-          const angle = (i / 12) * Math.PI * 2;
-          const radius = 2.0;
-          
-          const sphere = document.createElement('a-sphere');
-          sphere.setAttribute('radius', '0.4');
-          sphere.setAttribute('color', colors[i % colors.length]);
-          sphere.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 2.0');
-          sphere.setAttribute('position', `${Math.cos(angle) * radius} ${Math.sin(angle) * 0.5 + 0.5} ${Math.sin(angle) * radius}`);
-          
-          // Animación de movimiento
-          sphere.setAttribute('animation', `property: position; to: ${Math.cos(angle + 0.2) * radius} ${Math.sin(angle + 0.2) * 0.5 + 0.5} ${Math.sin(angle + 0.2) * radius}; loop: true; dur: 2000; easing: easeInOutSine`);
-          
-          loadingGroup.appendChild(sphere);
-        }
-
-        // 3. TORRES DE LUCES (cilindros brillantes)
-        for (let i = 0; i < 8; i++) {
-          const angle = (i / 8) * Math.PI * 2;
-          const radius = 1.5;
-          
-          const pillar = document.createElement('a-cylinder');
-          pillar.setAttribute('radius', '0.15');
-          pillar.setAttribute('height', '1.0');
-          pillar.setAttribute('color', '#FFFFFF');
-          pillar.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 3.0');
-          pillar.setAttribute('position', `${Math.cos(angle) * radius} 0.8 ${Math.sin(angle) * radius}`);
-          
-          loadingGroup.appendChild(pillar);
-        }
-
-        // 4. TEXTO DE CARGA (para confirmar que algo está pasando)
-        const loadingText = document.createElement('a-text');
-        loadingText.setAttribute('value', 'Cargando...');
-        loadingText.setAttribute('color', '#FFFFFF');
-        loadingText.setAttribute('position', '0 2 -1');
-        loadingText.setAttribute('scale', '1 1 1');
-        loadingText.setAttribute('align', 'center');
-        loadingText.setAttribute('material', 'emissive: #FFFFFF; emissiveIntensity: 1.0');
-        loadingGroup.appendChild(loadingText);
-
         return loadingGroup;
       };
 
@@ -151,7 +77,6 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         modelEntity.setAttribute('scale', '0.1 0.1 0.1');
         modelEntity.setAttribute('visible', 'false');
 
-        // Intentar cargar el modelo GLB
         fetch(rutaModelo)
           .then(response => {
             if (response.ok) {
@@ -159,22 +84,12 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
               modelEntity.setAttribute('scale', '0.15 0.15 0.15');
               
               modelEntity.addEventListener('model-loaded', () => {
-                console.log(`Modelo cargado correctamente en ${markerType}`);
                 setModeloCargado(true);
-                setDebugInfo(prev => prev + ` | Modelo cargado en ${markerType}`);
               });
-
-              modelEntity.addEventListener('model-error', (e: any) => {
-                console.log(`Error al cargar modelo en ${markerType}:`, e);
-                setDebugInfo(prev => prev + ` | Error modelo ${markerType}`);
-              });
-            } else {
-              setDebugInfo(prev => prev + ` | Modelo no encontrado para ${markerType}`);
             }
           })
-          .catch((err) => {
-            console.log('Error al verificar modelo:', err);
-            setDebugInfo(prev => prev + ` | Error fetch ${markerType}`);
+          .catch(() => {
+            // Modelo no disponible, se usará el cubo de respaldo
           });
 
         return modelEntity;
@@ -186,65 +101,58 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         particlesGroup.setAttribute('position', '0 0 0');
         particlesGroup.setAttribute('visible', 'false');
 
-        // Crear partículas orbitando alrededor del modelo
-        const particleColors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
-        
-        for (let i = 0; i < 20; i++) {
-          const angle = (i / 20) * Math.PI * 2;
-          const radius = 1.2 + Math.random() * 0.5;
-          const height = 0.3 + Math.random() * 1.0;
-          const orbitDuration = 3000 + Math.random() * 2000;
-          
-          const particle = document.createElement('a-sphere');
-          particle.setAttribute('radius', '0.08');
-          particle.setAttribute('color', particleColors[i % particleColors.length]);
-          particle.setAttribute('material', `emissive: ${particleColors[i % particleColors.length]}; emissiveIntensity: 1.5; transparent: true; opacity: 0.9`);
-          
-          // Posición inicial
+        // Destellos amarillo claro orbitando el modelo
+        const sparkleColor = '#FFFACD';
+        const sparkleEmissive = '#FFD700';
+
+        for (let i = 0; i < 24; i++) {
+          const angle = (i / 24) * Math.PI * 2;
+          const radius = 1.0 + Math.random() * 0.6;
+          const height = 0.2 + Math.random() * 1.2;
+          const orbitDuration = 2500 + Math.random() * 2000;
+          const size = 0.04 + Math.random() * 0.05;
+
+          const spark = document.createElement('a-sphere');
+          spark.setAttribute('radius', `${size}`);
+          spark.setAttribute('color', sparkleColor);
+          spark.setAttribute('material', `emissive: ${sparkleEmissive}; emissiveIntensity: 2.5; transparent: true; opacity: ${0.7 + Math.random() * 0.3}`);
+
           const x = Math.cos(angle) * radius;
           const z = Math.sin(angle) * radius;
-          particle.setAttribute('position', `${x} ${height} ${z}`);
-          
-          // Animación de órbita
-          particle.setAttribute('animation', `
+          spark.setAttribute('position', `${x} ${height} ${z}`);
+
+          // Órbita suave
+          const nextAngle = angle + Math.PI * 2;
+          spark.setAttribute('animation', `
             property: position;
-            to: ${Math.cos(angle + Math.PI * 2) * radius} ${height + 0.2} ${Math.sin(angle + Math.PI * 2) * radius};
+            to: ${Math.cos(nextAngle) * radius} ${height + 0.15} ${Math.sin(nextAngle) * radius};
             loop: true;
             dur: ${orbitDuration};
             easing: linear
           `);
-          
-          // Animación de escala pulsante
-          particle.setAttribute('animation__scale', `
+
+          // Pulso de escala (efecto destello)
+          spark.setAttribute('animation__scale', `
             property: scale;
-            to: 1.5 1.5 1.5;
+            to: 2 2 2;
             dir: alternate;
             loop: true;
-            dur: ${1000 + Math.random() * 1000};
+            dur: ${400 + Math.random() * 600};
             easing: easeInOutSine
           `);
-          
-          particlesGroup.appendChild(particle);
-        }
 
-        // Añadir líneas de conexión entre partículas (efecto de red)
-        for (let i = 0; i < 8; i++) {
-          const line = document.createElement('a-entity');
-          line.setAttribute('geometry', 'primitive: cylinder; radius: 0.02; height: 2');
-          line.setAttribute('material', `color: ${color}; transparent: true; opacity: 0.4; emissive: ${color}; emissiveIntensity: 0.5`);
-          line.setAttribute('position', '0 0.5 0');
-          line.setAttribute('rotation', `${Math.random() * 360} ${Math.random() * 360} ${Math.random() * 360}`);
-          
-          // Animación de rotación de líneas
-          line.setAttribute('animation', `
-            property: rotation;
-            to: ${Math.random() * 360 + 360} ${Math.random() * 360 + 360} ${Math.random() * 360 + 360};
+          // Pulso de opacidad (parpadeo)
+          spark.setAttribute('animation__opacity', `
+            property: material.opacity;
+            from: 0.3;
+            to: 1.0;
+            dir: alternate;
             loop: true;
-            dur: ${5000 + Math.random() * 5000};
-            easing: linear
+            dur: ${300 + Math.random() * 500};
+            easing: easeInOutSine
           `);
-          
-          particlesGroup.appendChild(line);
+
+          particlesGroup.appendChild(spark);
         }
 
         return particlesGroup;
@@ -268,17 +176,13 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
 
       // Eventos del marcador Hiro
       markerHiro.addEventListener('markerFound', () => {
-        console.log('Marcador Hiro detectado');
         setMarcadorDetectado('Hiro');
-        setDebugInfo('Hiro detectado');
         loadingGroupHiro.setAttribute('visible', 'false');
         modelEntityHiro.setAttribute('visible', 'true');
       });
 
       markerHiro.addEventListener('markerLost', () => {
-        console.log('Marcador Hiro perdido');
         setMarcadorDetectado(null);
-        setDebugInfo('Hiro perdido');
         loadingGroupHiro.setAttribute('visible', 'true');
         modelEntityHiro.setAttribute('visible', 'false');
       });
@@ -294,11 +198,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       markerCustom.setAttribute('smooth', 'true');
       markerCustom.setAttribute('smoothCount', '5');
       markerCustom.setAttribute('emitevents', 'true');
-      // Tamaño del marcador en metros (importante para la detección)
       markerCustom.setAttribute('size', '1');
-
-      console.log('URL del patrón personalizado:', patternUrl);
-      setDebugInfo(`Cargando patrón: ${patternUrl}`);
 
       const loadingGroupCustom = createLoadingGroup();
       const modelEntityCustom = createModelEntity('custom');
@@ -308,27 +208,20 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       markerCustom.appendChild(modelEntityCustom);
       markerCustom.appendChild(particlesGroupCustom);
 
-      // Eventos del marcador personalizado
       markerCustom.addEventListener('markerFound', () => {
-        console.log('Marcador Kickoff detectado');
         setMarcadorDetectado('Kickoff');
-        setDebugInfo('Kickoff detectado');
         loadingGroupCustom.setAttribute('visible', 'false');
         modelEntityCustom.setAttribute('visible', 'true');
       });
 
       markerCustom.addEventListener('markerLost', () => {
-        console.log('Marcador Kickoff perdido');
         setMarcadorDetectado(null);
-        setDebugInfo('Kickoff perdido');
         loadingGroupCustom.setAttribute('visible', 'true');
         modelEntityCustom.setAttribute('visible', 'false');
       });
 
-      // Evento de error para el marcador personalizado
-      markerCustom.addEventListener('markerError', (e: any) => {
-        console.error('Error en marcador personalizado:', e);
-        setDebugInfo(`Error marcador: ${e.detail || 'desconocido'}`);
+      markerCustom.addEventListener('markerError', (_e: any) => {
+        // Error silencioso al cargar el patrón
       });
 
       // Guardar referencias
@@ -386,7 +279,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
           try {
             arjsSystem._arSession.stop();
           } catch (e) {
-            console.log('Error al detener sesión AR:', e);
+            // Error silencioso al detener sesión AR
           }
         }
         
@@ -487,24 +380,6 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         }}
       />
       
-      {/* Debug Info */}
-      {/* <div style={{
-        position: 'fixed',
-        top: '80px',
-        left: '10px',
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        color: '#00ff00',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
-        fontFamily: 'monospace',
-        zIndex: 1001,
-        maxWidth: '300px',
-        wordWrap: 'break-word'
-      }}>
-        <strong>Debug:</strong> {debugInfo}
-      </div> */}
-
       {/* Indicador de marcador detectado */}
       {marcadorDetectado && (
         <div style={{
