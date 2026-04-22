@@ -45,7 +45,7 @@ function Japon() {
       { 
         nombre: "DAIZEN MAEDA", 
         posicion: "DELANTERO", 
-        imagen: "https://imgs.search.brave.com/IJW9lvZJSILK8gFkr-YJzQMWMdyf7WB6mSkA5Kyf3jQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dGhlaG90c3B1cndh/eS5jb20vd3AtY29u/dGVudC91cGxvYWRz/LzIwMjUvMTIvRGFp/emVuLU1hZWRhLTIw/MjUuanBn" 
+        imagen: "https://imgs.search.brave.com/wqN6UrwRy7m_TXbEhAedJ4efj5qzhctCFcngWmugMXo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjI2/ODkwNDU1NC9waG90/by9nbGFzZ293LXNj/b3RsYW5kLWRhaXpl/bi1tYWVkYS1vZi1q/YXBhbi1sb29rcy1v/bi1kdXJpbmctdGhl/LWludGVybmF0aW9u/YWwtZnJpZW5kbHkt/bWF0Y2guanBnP3M9/NjEyeDYxMiZ3PTAm/az0yMCZjPWsydVJu/cUxteC1NaEZmZXIz/Z1N1RnB3VWpRX3NJ/T0NVbUVCUHFITWFT/d1k9" 
       },
       { 
         nombre: "SHOGO TANIGUCHI", 

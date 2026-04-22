@@ -45,7 +45,7 @@ function Espana() {
       { 
         nombre: "FABIÁN RUIZ", 
         posicion: "MEDIOCAMPISTA", 
-        imagen: "https://imgs.search.brave.com/0Sm0NQVA3bXshTMs8H3lRBKIEvWw6B5-Rvc_y5G_5-g/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9waWN0/dXJlcy50cmlidW5h/LmNvbS9pbWFnZS9m/YjdkNzg4Yi03NTE0/LTQ4Y2QtOGMwNy1i/ZjUzZjI0OWM0ZDE_/d2lkdGg9MTkyMCZx/dWFsaXR5PTcw" 
+        imagen: "https://imgs.search.brave.com/nmbLYjThZ8_eL_i0qlTG3hZN6r2jrScAZxaRgoq5sZU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjE3/MDIzMDUyNC9waG90/by9nZW5ldmEtc3dp/dHplcmxhbmQtZmFi/aSVDMyVBMW4tcnVp/ei1vZi1zcGFpbi1j/ZWxlYnJhdGVzLWhp/cy1nb2FsLWR1cmlu/Zy10aGUtdWVmYS1u/YXRpb25zLWxlYWd1/ZS5qcGc_cz02MTJ4/NjEyJnc9MCZrPTIw/JmM9MUtxaFBhOXVY/OVVXenJaNnN1MUlU/UTlJQXk3Nm1qMFBU/SFZ2bHUtZXlEQT0" 
       },
       { 
         nombre: "AYMERIC LAPORTE", 
