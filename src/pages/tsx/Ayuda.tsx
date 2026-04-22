@@ -310,20 +310,7 @@ function Ayuda() {
             </div>
             <div className="ayuda-card-body">
               <div className="accordion" id="faqAccordion">
-                {/* Pregunta 1 */}
-                <div className="ayuda-accordion-item">
-                  <h3 className="accordion-header">
-                    <button className="ayuda-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                      ¿Dónde puedo encontrar códigos QR válidos?
-                    </button>
-                  </h3>
-                  <div id="faq1" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div className="ayuda-accordion-body">
-                      Los códigos QR oficiales estarán disponibles en la página web oficial del Mundial 2026, en las redes sociales oficiales y en materiales promocionales del evento.
-                    </div>
-                  </div>
-                </div>
-                
+                              
                 {/* Pregunta 2 */}
                 <div className="ayuda-accordion-item">
                   <h3 className="accordion-header">

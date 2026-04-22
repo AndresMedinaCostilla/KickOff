@@ -115,6 +115,9 @@ function ARPage() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [arError, setArError] = useState<string | null>(null);
   const [/*showInfoMessage*/, setShowInfoMessage] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [shakeModal, setShakeModal] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState<Array<{id: number; x: number; color: string; delay: number; size: number; rotation: number}>>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelAnimRef = useRef<number | null>(null);
@@ -217,19 +220,10 @@ function ARPage() {
     
     if (pais) {
       setPaisActual(pais);
-      if (triviaPorPais[pais]) {
-        setTriviaData(triviaPorPais[pais]);
-      } else {
-        setTriviaData({
-          pregunta: "¿Cuántos equipos participan en la Copa Mundial de Fútbol?",
-          opciones: [
-            { id: 1, text: "12", correct: false },
-            { id: 2, text: "32", correct: true },
-            { id: 3, text: "24", correct: false },
-            { id: 4, text: "16", correct: false }
-          ]
-        });
-      }
+      // Seleccionar pregunta aleatoria de todo el pool de países
+      const todasLasPreguntas = Object.values(triviaPorPais);
+      const preguntaAleatoria = todasLasPreguntas[Math.floor(Math.random() * todasLasPreguntas.length)];
+      setTriviaData(preguntaAleatoria);
       setIsLoading(false);
       
       // Aplicar estilos de AR
@@ -361,11 +355,78 @@ function ARPage() {
     setSelectedFilter(null);
     setShowResult(false);
     setIsCorrect(false);
+    setShakeModal(false);
     
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
+  };
+
+  // Sonido de fanfarria ascendente para respuesta correcta
+  const playCorrectSound = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t = ctx.currentTime + i * 0.13;
+        gain.gain.setValueAtTime(0.35, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      });
+    } catch (_) { /* silencioso */ }
+  };
+
+  // Sonido de tono descendente para respuesta incorrecta
+  const playIncorrectSound = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const notes = [350, 280, 210];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        const t = ctx.currentTime + i * 0.22;
+        osc.frequency.setValueAtTime(freq, t);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.72, t + 0.38);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+        osc.start(t);
+        osc.stop(t + 0.45);
+      });
+    } catch (_) { /* silencioso */ }
+  };
+
+  // Lanzar confetti
+  const launchConfetti = () => {
+    const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98FB98', '#FF9F43', '#A29BFE'];
+    const pieces = Array.from({ length: 90 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      delay: Math.random() * 0.6,
+      size: 7 + Math.random() * 9,
+      rotation: Math.random() * 360,
+    }));
+    setConfettiPieces(pieces);
+    setShowConfetti(true);
+    setTimeout(() => {
+      setShowConfetti(false);
+      setConfettiPieces([]);
+    }, 3500);
   };
 
   const handleOptionSelect = (optionId: number) => {
@@ -377,9 +438,18 @@ function ARPage() {
         setIsCorrect(selectedOption.correct);
         setShowResult(true);
         
+        if (selectedOption.correct) {
+          playCorrectSound();
+          launchConfetti();
+        } else {
+          playIncorrectSound();
+          setShakeModal(true);
+          setTimeout(() => setShakeModal(false), 650);
+        }
+        
         setTimeout(() => {
           closeModal();
-        }, 2000);
+        }, 3000);
       }
     }
   };
@@ -475,7 +545,7 @@ function ARPage() {
 
       {showTriviaModal && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className={`modal-content${shakeModal ? ' modal-shake' : ''}`} onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-button" onClick={closeModal}>
               ✕
             </button>
@@ -505,7 +575,7 @@ function ARPage() {
                   </div>
                 ) : (
                   <div className={`trivia-result ${isCorrect ? 'trivia-result--correct' : 'trivia-result--incorrect'}`}>
-                    {isCorrect ? '¡Correcto! ✓' : 'Incorrecto ✗'}
+                    {isCorrect ? '🎉 ¡Correcto!' : '😢 ¡Incorrecto!'}
                   </div>
                 )}
               </div>
@@ -559,6 +629,26 @@ function ARPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Lluvia de confetti para respuesta correcta */}
+      {showConfetti && (
+        <div className="confetti-overlay" aria-hidden="true">
+          {confettiPieces.map(piece => (
+            <div
+              key={piece.id}
+              className="confetti-piece"
+              style={{
+                left: `${piece.x}%`,
+                width: `${piece.size}px`,
+                height: `${piece.size * 1.4}px`,
+                backgroundColor: piece.color,
+                animationDelay: `${piece.delay}s`,
+                transform: `rotate(${piece.rotation}deg)`,
+              }}
+            />
+          ))}
         </div>
       )}
     </div>
