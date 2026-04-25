@@ -30,7 +30,7 @@ function Paises() {
     <div className="container mt-4 px-3">
       <div className="text-center mb-4">
         <h1 className="h4 fw-bold text-dark mb-1">Mundial 2026</h1>
-        <p className="text-muted small">Haz clic en cualquier país para ver información</p>
+        <p className="text-muted small">Haz clic en cualquier país para ver información, para escanear una imagen dentro del pais usa el icono de la camara </p>
       </div>
 
       <div className="row row-cols-2 g-3">

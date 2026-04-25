@@ -72,7 +72,7 @@ function Navbar() {
               </li>
               <li className="nav-item">
                 <Link className="nav-link text-white" to="/paises" onClick={closeMenu}>
-                  Países
+                  Escanear
                 </Link>
               </li>
               <li className="nav-item">
@@ -134,7 +134,7 @@ function Navbar() {
                   onClick={closeMenu}
                 >
                   <i className="bi bi-flag me-3"></i>
-                  Países
+                  Escanear
                 </Link>
               </li>
               <li className="nav-item">

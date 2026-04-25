@@ -218,6 +218,33 @@ function Tunez() {
             ))}
           </div>
         </div>
+
+        {/* Estadísticas históricas */}
+        <div className="mb-5">
+          <h2 className="seccion-titulo">Estadísticas</h2>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <span className="stat-icono">🌍</span>
+              <span className="stat-valor">#30</span>
+              <p className="stat-label">Ranking FIFA</p>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icono">⚽</span>
+              <span className="stat-valor">6</span>
+              <p className="stat-label">Mundiales Jugados</p>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icono">🏆</span>
+              <span className="stat-valor">0</span>
+              <p className="stat-label">Títulos Mundiales</p>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icono">🎯</span>
+              <span className="stat-valor">Grupos</span>
+              <p className="stat-label">Mejor Resultado</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

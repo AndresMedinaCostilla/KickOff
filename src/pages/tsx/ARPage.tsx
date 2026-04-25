@@ -17,90 +17,60 @@ interface TriviaData {
   opciones: TriviaOption[];
 }
 
-// Base de datos de trivia por país
-const triviaPorPais: Record<string, TriviaData> = {
-  "MÉXICO": {
-    pregunta: "¿En qué año México ganó su primera Copa Mundial de Fútbol?",
-    opciones: [
-      { id: 1, text: "1970", correct: false },
-      { id: 2, text: "1986", correct: false },
-      { id: 3, text: "Nunca ha ganado", correct: true },
-      { id: 4, text: "1958", correct: false }
-    ]
-  },
-  "SUDÁFRICA": {
-    pregunta: "¿Cómo se llama el estadio donde Sudáfrica fue anfitrión de la final del Mundial 2010?",
-    opciones: [
-      { id: 1, text: "Estadio Ellis Park", correct: false },
-      { id: 2, text: "Soccer City (FNB Stadium)", correct: true },
-      { id: 3, text: "Estadio Loftus Versfeld", correct: false },
-      { id: 4, text: "Estadio Moses Mabhida", correct: false }
-    ]
-  },
-  "COREA DEL SUR": {
-    pregunta: "¿Qué jugador coreano fue máximo goleador de la Premier League en la temporada 2021-22?",
-    opciones: [
-      { id: 1, text: "Lee Kang-in", correct: false },
-      { id: 2, text: "Hwang Hee-chan", correct: false },
-      { id: 3, text: "Son Heung-min", correct: true },
-      { id: 4, text: "Kim Min-jae", correct: false }
-    ]
-  },
-  "COLOMBIA": {
-    pregunta: "¿Quién es el máximo goleador histórico de la selección colombiana?",
-    opciones: [
-      { id: 1, text: "Radamel Falcao", correct: true },
-      { id: 2, text: "James Rodríguez", correct: false },
-      { id: 3, text: "Carlos Bacca", correct: false },
-      { id: 4, text: "Luis Díaz", correct: false }
-    ]
-  },
-  "UZBEKISTÁN": {
-    pregunta: "¿Cuál es el jugador uzbeko más famoso que ha jugado en Europa?",
-    opciones: [
-      { id: 1, text: "Maksim Shatskikh", correct: false },
-      { id: 2, text: "Odil Ahmedov", correct: false },
-      { id: 3, text: "Eldor Shomurodov", correct: true },
-      { id: 4, text: "Server Djeparov", correct: false }
-    ]
-  },
-  "TÚNEZ": {
-    pregunta: "¿Cómo se llama el máximo goleador histórico de Túnez?",
-    opciones: [
-      { id: 1, text: "Wahbi Khazri", correct: false },
-      { id: 2, text: "Youssef Msakni", correct: false },
-      { id: 3, text: "Issam Jemâa", correct: true },
-      { id: 4, text: "Francileudo Santos", correct: false }
-    ]
-  },
-  "JAPÓN": {
-    pregunta: "¿Qué jugador japonés ha ganado la Champions League?",
-    opciones: [
-      { id: 1, text: "Hidetoshi Nakata", correct: false },
-      { id: 2, text: "Keisuke Honda", correct: false },
-      { id: 3, text: "Takumi Minamino", correct: true },
-      { id: 4, text: "Shinji Kagawa", correct: false }
-    ]
-  },
-  "ESPAÑA": {
-    pregunta: "¿En qué año ganó España la Copa del Mundo?",
-    opciones: [
-      { id: 1, text: "2010", correct: true },
-      { id: 2, text: "2014", correct: false },
-      { id: 3, text: "2018", correct: false },
-      { id: 4, text: "2022", correct: false }
-    ]
-  },
-  "URUGUAY": {
-    pregunta: "¿Cuántas Copas del Mundo ha ganado Uruguay?",
-    opciones: [
-      { id: 1, text: "1", correct: false },
-      { id: 2, text: "2", correct: true },
-      { id: 3, text: "3", correct: false },
-      { id: 4, text: "4", correct: false }
-    ]
-  }
-};
+// Pool global de 40 preguntas de trivia 
+const triviaPool: TriviaData[] = [
+  // --- originales (9) ---
+  { pregunta: '¿En qué año México ganó su primera Copa Mundial?', opciones: [{ id:1,text:'1970',correct:false},{id:2,text:'1986',correct:false},{id:3,text:'Nunca ha ganado',correct:true},{id:4,text:'1958',correct:false}] },
+  { pregunta: '¿Estadio donde fue la final del Mundial Sudáfrica 2010?', opciones: [{id:1,text:'Ellis Park',correct:false},{id:2,text:'Soccer City (FNB Stadium)',correct:true},{id:3,text:'Loftus Versfeld',correct:false},{id:4,text:'Moses Mabhida',correct:false}] },
+  { pregunta: '¿Qué jugador coreano compartió el Botín de Oro de la Premier League 2021-22?', opciones: [{id:1,text:'Lee Kang-in',correct:false},{id:2,text:'Hwang Hee-chan',correct:false},{id:3,text:'Son Heung-min',correct:true},{id:4,text:'Kim Min-jae',correct:false}] },
+  { pregunta: '¿Quién es el máximo goleador histórico de Colombia?', opciones: [{id:1,text:'Radamel Falcao',correct:true},{id:2,text:'James Rodríguez',correct:false},{id:3,text:'Carlos Bacca',correct:false},{id:4,text:'Luis Díaz',correct:false}] },
+  { pregunta: '¿Cuál es el jugador uzbeko más reconocido en Europa?', opciones: [{id:1,text:'Maksim Shatskikh',correct:false},{id:2,text:'Odil Ahmedov',correct:false},{id:3,text:'Eldor Shomurodov',correct:true},{id:4,text:'Server Djeparov',correct:false}] },
+  { pregunta: '¿Quién es el máximo goleador histórico de Túnez?', opciones: [{id:1,text:'Wahbi Khazri',correct:false},{id:2,text:'Youssef Msakni',correct:false},{id:3,text:'Issam Jemâa',correct:true},{id:4,text:'Francileudo Santos',correct:false}] },
+  { pregunta: '¿Qué jugador japonés ganó la Champions League con Liverpool?', opciones: [{id:1,text:'Hidetoshi Nakata',correct:false},{id:2,text:'Keisuke Honda',correct:false},{id:3,text:'Takumi Minamino',correct:true},{id:4,text:'Shinji Kagawa',correct:false}] },
+  { pregunta: '¿En qué año ganó España su único Mundial de Fútbol?', opciones: [{id:1,text:'2010',correct:true},{id:2,text:'2014',correct:false},{id:3,text:'2018',correct:false},{id:4,text:'2022',correct:false}] },
+  { pregunta: '¿Cuántas Copas del Mundo ha ganado Uruguay?', opciones: [{id:1,text:'1',correct:false},{id:2,text:'2',correct:true},{id:3,text:'3',correct:false},{id:4,text:'4',correct:false}] },
+  // --- nuevas (31) ---
+  { pregunta: '¿Cuántos Mundiales ha ganado Brasil?', opciones: [{id:1,text:'3',correct:false},{id:2,text:'4',correct:false},{id:3,text:'5',correct:true},{id:4,text:'6',correct:false}] },
+  { pregunta: '¿En qué año se celebró el primer Mundial de Fútbol?', opciones: [{id:1,text:'1926',correct:false},{id:2,text:'1930',correct:true},{id:3,text:'1934',correct:false},{id:4,text:'1938',correct:false}] },
+  { pregunta: '¿Qué país fue campeón del primer Mundial de Fútbol?', opciones: [{id:1,text:'Brasil',correct:false},{id:2,text:'Argentina',correct:false},{id:3,text:'Uruguay',correct:true},{id:4,text:'Italia',correct:false}] },
+  { pregunta: '¿Cuántos equipos participarán en el Mundial 2026?', opciones: [{id:1,text:'32',correct:false},{id:2,text:'40',correct:false},{id:3,text:'48',correct:true},{id:4,text:'64',correct:false}] },
+  { pregunta: '¿Qué país ganó la Copa del Mundo 2018?', opciones: [{id:1,text:'Croacia',correct:false},{id:2,text:'Francia',correct:true},{id:3,text:'Bélgica',correct:false},{id:4,text:'Brasil',correct:false}] },
+  { pregunta: '¿Qué país ganó la Copa del Mundo 2022?', opciones: [{id:1,text:'Francia',correct:false},{id:2,text:'Marruecos',correct:false},{id:3,text:'Argentina',correct:true},{id:4,text:'Croacia',correct:false}] },
+  { pregunta: '¿Quién fue el máximo goleador histórico en Mundiales (hasta 2022)?', opciones: [{id:1,text:'Ronaldo Nazário',correct:false},{id:2,text:'Pelé',correct:false},{id:3,text:'Miroslav Klose',correct:true},{id:4,text:'Gerd Müller',correct:false}] },
+  { pregunta: '¿Cuántos goles marcó Mbappé en la final del Mundial 2022?', opciones: [{id:1,text:'1',correct:false},{id:2,text:'2',correct:false},{id:3,text:'3',correct:true},{id:4,text:'4',correct:false}] },
+  { pregunta: '¿Quién ganó el Balón de Oro del Mundial 2022?', opciones: [{id:1,text:'Kylian Mbappé',correct:false},{id:2,text:'Luka Modrić',correct:false},{id:3,text:'Lionel Messi',correct:true},{id:4,text:'Emiliano Martínez',correct:false}] },
+  { pregunta: '¿Qué país organizó el Mundial 2022?', opciones: [{id:1,text:'Emiratos Árabes',correct:false},{id:2,text:'Arabia Saudita',correct:false},{id:3,text:'Qatar',correct:true},{id:4,text:'Bahréin',correct:false}] },
+  { pregunta: '¿Cuántos países serán sedes del Mundial 2026?', opciones: [{id:1,text:'1',correct:false},{id:2,text:'2',correct:false},{id:3,text:'3',correct:true},{id:4,text:'4',correct:false}] },
+  { pregunta: '¿Cuántas Copas del Mundo ha ganado Alemania?', opciones: [{id:1,text:'3',correct:false},{id:2,text:'4',correct:true},{id:3,text:'5',correct:false},{id:4,text:'6',correct:false}] },
+  { pregunta: '¿Qué país fue el primero de África en llegar a semifinales de un Mundial?', opciones: [{id:1,text:'Nigeria',correct:false},{id:2,text:'Ghana',correct:false},{id:3,text:'Senegal',correct:false},{id:4,text:'Marruecos',correct:true}] },
+  { pregunta: '¿Quién fue el máximo goleador del Mundial 2018?', opciones: [{id:1,text:'Antoine Griezmann',correct:false},{id:2,text:'Romelu Lukaku',correct:false},{id:3,text:'Harry Kane',correct:true},{id:4,text:'Cristiano Ronaldo',correct:false}] },
+  { pregunta: '¿Cuántas Copas del Mundo ha ganado Italia?', opciones: [{id:1,text:'2',correct:false},{id:2,text:'3',correct:false},{id:3,text:'4',correct:true},{id:4,text:'5',correct:false}] },
+  { pregunta: '¿Quién ganó el Balón de Oro del Mundial 2018?', opciones: [{id:1,text:'Griezmann',correct:false},{id:2,text:'Mbappé',correct:false},{id:3,text:'Luka Modrić',correct:true},{id:4,text:'Messi',correct:false}] },
+  { pregunta: '¿Cuántas Copas del Mundo ha ganado Francia?', opciones: [{id:1,text:'1',correct:false},{id:2,text:'2',correct:true},{id:3,text:'3',correct:false},{id:4,text:'4',correct:false}] },
+  { pregunta: '¿En qué país se celebró el Mundial 2014?', opciones: [{id:1,text:'Argentina',correct:false},{id:2,text:'Colombia',correct:false},{id:3,text:'Brasil',correct:true},{id:4,text:'Chile',correct:false}] },
+  { pregunta: '¿Qué equipo ganó el Mundial 2006?', opciones: [{id:1,text:'Francia',correct:false},{id:2,text:'Alemania',correct:false},{id:3,text:'Portugal',correct:false},{id:4,text:'Italia',correct:true}] },
+  { pregunta: '¿Cuántos equipos participaron en el primer Mundial de 1930?', opciones: [{id:1,text:'13',correct:true},{id:2,text:'16',correct:false},{id:3,text:'24',correct:false},{id:4,text:'32',correct:false}] },
+  { pregunta: '¿Quién fue el portero titular de España en el Mundial 2010?', opciones: [{id:1,text:'Víctor Valdés',correct:false},{id:2,text:'Pepe Reina',correct:false},{id:3,text:'Iker Casillas',correct:true},{id:4,text:'David de Gea',correct:false}] },
+  { pregunta: '¿Cuántas Copas del Mundo ha ganado Argentina?', opciones: [{id:1,text:'1',correct:false},{id:2,text:'2',correct:false},{id:3,text:'3',correct:true},{id:4,text:'4',correct:false}] },
+  { pregunta: '¿Cuál fue el primer país asiático en llegar a semifinales de un Mundial?', opciones: [{id:1,text:'Japón',correct:false},{id:2,text:'Corea del Sur',correct:true},{id:3,text:'Arabia Saudita',correct:false},{id:4,text:'Australia',correct:false}] },
+  { pregunta: '¿Cuántos goles anotó Ronaldo Nazário en los Mundiales?', opciones: [{id:1,text:'12',correct:false},{id:2,text:'13',correct:false},{id:3,text:'15',correct:true},{id:4,text:'17',correct:false}] },
+  { pregunta: '¿Quién ganó el Botín de Oro (máximo goleador) del Mundial Brasil 2014?', opciones: [{id:1,text:'Neymar',correct:false},{id:2,text:'Thomas Müller',correct:false},{id:3,text:'James Rodríguez',correct:true},{id:4,text:'Lionel Messi',correct:false}] },
+  { pregunta: '¿Qué selección ganó el Mundial Femenino 2023?', opciones: [{id:1,text:'EE.UU.',correct:false},{id:2,text:'Australia',correct:false},{id:3,text:'España',correct:true},{id:4,text:'Suecia',correct:false}] },
+  { pregunta: '¿Cuántos Balones de Oro ha ganado Lionel Messi?', opciones: [{id:1,text:'6',correct:false},{id:2,text:'7',correct:false},{id:3,text:'8',correct:true},{id:4,text:'9',correct:false}] },
+  { pregunta: '¿Cuántas veces ha ganado Países Bajos la Copa del Mundo?', opciones: [{id:1,text:'0',correct:true},{id:2,text:'1',correct:false},{id:3,text:'2',correct:false},{id:4,text:'3',correct:false}] },
+  { pregunta: '¿Quién marcó el gol del título en la final del Mundial 2010?', opciones: [{id:1,text:'David Villa',correct:false},{id:2,text:'Andrés Iniesta',correct:true},{id:3,text:'Fernando Torres',correct:false},{id:4,text:'Xavi',correct:false}] },
+  { pregunta: '¿En qué año debutó Japón en una Copa del Mundo?', opciones: [{id:1,text:'1994',correct:false},{id:2,text:'1998',correct:true},{id:3,text:'2002',correct:false},{id:4,text:'2006',correct:false}] },
+  { pregunta: '¿Qué ciudad albergará el partido inaugural del Mundial 2026?', opciones: [{id:1,text:'Los Ángeles',correct:false},{id:2,text:'Nueva York',correct:false},{id:3,text:'Ciudad de México',correct:true},{id:4,text:'Toronto',correct:false}] },
+  { pregunta: '¿Cuántos jugadores forman cada equipo en el campo de fútbol?', opciones: [{id:1,text:'10',correct:false},{id:2,text:'11',correct:true},{id:3,text:'12',correct:false},{id:4,text:'9',correct:false}] },
+];
+
+// Selecciona N preguntas aleatorias sin repetición del pool
+function seleccionarPreguntas(n: number): TriviaData[] {
+  const shuffled = [...triviaPool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+const TOTAL_PREGUNTAS = 5;
 
 function ARPage() {
   const navigate = useNavigate();
@@ -110,7 +80,10 @@ function ARPage() {
   const [selectedFilter, setSelectedFilter] = useState<number | null>(null);
   const [paisActual, setPaisActual] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [triviaData, setTriviaData] = useState<TriviaData | null>(null);
+  const [triviaQuestions, setTriviaQuestions] = useState<TriviaData[]>([]);
+  const [currentQIdx, setCurrentQIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [quizFinished, setQuizFinished] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [arError, setArError] = useState<string | null>(null);
@@ -220,10 +193,7 @@ function ARPage() {
     
     if (pais) {
       setPaisActual(pais);
-      // Seleccionar pregunta aleatoria de todo el pool de países
-      const todasLasPreguntas = Object.values(triviaPorPais);
-      const preguntaAleatoria = todasLasPreguntas[Math.floor(Math.random() * todasLasPreguntas.length)];
-      setTriviaData(preguntaAleatoria);
+      setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
       setIsLoading(false);
       
       // Aplicar estilos de AR
@@ -356,6 +326,9 @@ function ARPage() {
     setShowResult(false);
     setIsCorrect(false);
     setShakeModal(false);
+    setCurrentQIdx(0);
+    setScore(0);
+    setQuizFinished(false);
     
     if (videoRef.current) {
       videoRef.current.pause();
@@ -430,27 +403,42 @@ function ARPage() {
   };
 
   const handleOptionSelect = (optionId: number) => {
+    if (showResult || quizFinished) return; // bloquear doble click
     setSelectedTriviaOption(optionId);
-    
-    if (triviaData) {
-      const selectedOption = triviaData.opciones.find(opt => opt.id === optionId);
-      if (selectedOption) {
-        setIsCorrect(selectedOption.correct);
-        setShowResult(true);
-        
-        if (selectedOption.correct) {
-          playCorrectSound();
-          launchConfetti();
-        } else {
-          playIncorrectSound();
-          setShakeModal(true);
-          setTimeout(() => setShakeModal(false), 650);
-        }
-        
-        setTimeout(() => {
-          closeModal();
-        }, 3000);
-      }
+
+    const currentQ = triviaQuestions[currentQIdx];
+    if (!currentQ) return;
+    const selectedOption = currentQ.opciones.find(opt => opt.id === optionId);
+    if (!selectedOption) return;
+
+    const correct = selectedOption.correct;
+    setIsCorrect(correct);
+    setShowResult(true);
+    if (correct) {
+      playCorrectSound();
+      launchConfetti();
+      setScore(s => s + 1);
+    } else {
+      playIncorrectSound();
+      setShakeModal(true);
+      setTimeout(() => setShakeModal(false), 650);
+    }
+
+    const nextIdx = currentQIdx + 1;
+    if (nextIdx >= TOTAL_PREGUNTAS) {
+      // Última pregunta → mostrar resultado final
+      setTimeout(() => {
+        setQuizFinished(true);
+        setShowResult(false);
+      }, 1500);
+      setTimeout(() => closeModal(), 5000);
+    } else {
+      // Siguiente pregunta
+      setTimeout(() => {
+        setCurrentQIdx(nextIdx);
+        setSelectedTriviaOption(null);
+        setShowResult(false);
+      }, 1500);
     }
   };
 
@@ -486,7 +474,7 @@ function ARPage() {
     );
   }
 
-  if (!paisActual || !triviaData) {
+  if (!paisActual) {
     return null;
   }
 
@@ -525,9 +513,13 @@ function ARPage() {
       </div>
 
       <div className="ar-buttons-container">
-        <button 
+        <button
           className="ar-action-button"
           onClick={() => {
+            setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
+            setCurrentQIdx(0);
+            setScore(0);
+            setQuizFinished(false);
             setShowTriviaModal(true);
             setSelectedTriviaOption(null);
             setShowResult(false);
@@ -543,41 +535,76 @@ function ARPage() {
         </button>
       </div>
 
-      {showTriviaModal && (
+      {showTriviaModal && triviaQuestions.length > 0 && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className={`modal-content${shakeModal ? ' modal-shake' : ''}`} onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-button" onClick={closeModal}>
               ✕
             </button>
-            
+
             <div className="modal-card">
               <div className="modal-body">
-                <p className="modal-question">
-                  {triviaData.pregunta}
-                </p>
-                
-                {!showResult ? (
-                  <div className="options-container">
-                    {triviaData.opciones.map((option) => (
-                      <div
-                        key={option.id}
-                        className={`option-item ${selectedTriviaOption === option.id ? 'selected' : ''}`}
-                        onClick={() => handleOptionSelect(option.id)}
-                      >
-                        <div className="option-circle">
-                          {selectedTriviaOption === option.id && (
-                            <span className="option-check">✓</span>
-                          )}
-                        </div>
-                        <span className="option-text">{option.text}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className={`trivia-result ${isCorrect ? 'trivia-result--correct' : 'trivia-result--incorrect'}`}>
-                    {isCorrect ? '🎉 ¡Correcto!' : '😢 ¡Incorrecto!'}
+
+                {/* Barra de progreso */}
+                {!quizFinished && (
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', margin:'0 16px 4px', fontSize:'0.8rem', color:'#666' }}>
+                    <span>Pregunta {currentQIdx + 1} de {TOTAL_PREGUNTAS}</span>
+                    <span>🏆 {score} correctas</span>
                   </div>
                 )}
+                {!quizFinished && (
+                  <div style={{ height:'4px', background:'#e9ecef', borderRadius:'4px', margin:'0 16px 12px', overflow:'hidden' }}>
+                    <div style={{ height:'100%', width:`${((currentQIdx) / TOTAL_PREGUNTAS) * 100}%`, background:'#2a5a9d', transition:'width 0.4s ease', borderRadius:'4px' }} />
+                  </div>
+                )}
+
+                {quizFinished ? (
+                  <div style={{ textAlign:'center', padding:'24px 20px' }}>
+                    <div style={{ fontSize:'3rem', marginBottom:'12px' }}>
+                      {score === TOTAL_PREGUNTAS ? '🏆' : score >= 3 ? '🌟' : '💪'}
+                    </div>
+                    <h3 style={{ fontWeight:800, color:'#1a3a6d', marginBottom:'8px' }}>Quiz terminado</h3>
+                    <p style={{ fontSize:'1.4rem', fontWeight:700, color: score >= 3 ? '#1a7a3c' : '#c0392b' }}>
+                      {score} / {TOTAL_PREGUNTAS} correctas
+                    </p>
+                    <p style={{ color:'#666', fontSize:'0.9rem' }}>
+                      {score === TOTAL_PREGUNTAS ? '¡Perfecto! Eres un experto del fútbol.' : score >= 3 ? '¡Buen resultado! Sigue aprendiendo.' : 'Sigue practicando, ¡lo lograrás!'}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="modal-question">
+                      {triviaQuestions[currentQIdx]?.pregunta}
+                    </p>
+
+                    {!showResult ? (
+                      <div className="options-container">
+                        {triviaQuestions[currentQIdx]?.opciones.map((option) => (
+                          <div
+                            key={option.id}
+                            className={`option-item ${selectedTriviaOption === option.id ? 'selected' : ''}`}
+                            onClick={() => handleOptionSelect(option.id)}
+                          >
+                            <div className="option-circle">
+                              {selectedTriviaOption === option.id && (
+                                <span className="option-check">✓</span>
+                              )}
+                            </div>
+                            <span className="option-text">{option.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={`trivia-result ${isCorrect ? 'trivia-result--correct' : 'trivia-result--incorrect'}`}>
+                        {isCorrect ? '🎉 ¡Correcto!' : '😢 ¡Incorrecto!'}
+                        <p style={{ fontSize:'0.8rem', marginTop:'6px', opacity:0.7, fontWeight:400 }}>
+                          {currentQIdx + 1 < TOTAL_PREGUNTAS ? 'Siguiente pregunta...' : 'Última pregunta'}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+
               </div>
             </div>
           </div>

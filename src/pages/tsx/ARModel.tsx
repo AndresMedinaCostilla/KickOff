@@ -5,13 +5,42 @@ interface ARModelProps {
   onInfoClick?: () => void;
 }
 
+// Descripciones cortas por país para la burbuja AR
+const descripcionesPais: Record<string, { flagCode: string; desc: string }> = {
+  'MÉXICO':       { flagCode: 'mx', desc: 'Sede del Mundial 2026. Albergará el partido inaugural en el Estadio Azteca.' },
+  'SUDÁFRICA':    { flagCode: 'za', desc: 'Fue sede del Mundial 2010, el primero celebrado en África.' },
+  'COREA DEL SUR':{ flagCode: 'kr', desc: 'Primer país asiático en llegar a semifinales de un Mundial (2002).' },
+  'COLOMBIA':     { flagCode: 'co', desc: 'Radamel Falcao es su máximo goleador histórico con 36 goles.' },
+  'UZBEKISTÁN':   { flagCode: 'uz', desc: 'Selección emergente de Asia Central con figuras como Eldor Shomurodov.' },
+  'TÚNEZ':        { flagCode: 'tn', desc: 'Primer país africano en ganar un partido de Copa del Mundo (1978).' },
+  'JAPÓN':        { flagCode: 'jp', desc: 'Ha clasificado consecutivamente a los Mundiales desde Francia 1998.' },
+  'ESPAÑA':       { flagCode: 'es', desc: 'Única selección en ganar Eurocopa–Mundial–Eurocopa de forma consecutiva.' },
+  'URUGUAY':      { flagCode: 'uy', desc: 'Bicampeón mundial (1930 y 1950) y anfitrión del primer Mundial.' },
+};
+
+// Mapa de nombres de país → archivo .patt
+// Los que tenían .patt originales correctos vuelven a ellos.
+// Corea, España, Uruguay, Túnez usan los regenerados.
+const mapaMarcadoresPais: Record<string, string> = {
+  'SUDÁFRICA':    'sudafrica',
+  'COREA DEL SUR':'corea_del_sur',//*
+  'COLOMBIA':     'colombia',
+  'UZBEKISTÁN':   'uzbekistan',
+  'TÚNEZ':        'tunez',//*
+  'JAPÓN':        'japon',
+  'ESPAÑA':       'espana',//*
+  'URUGUAY':      'uruguay',//*
+};
+
 function ARModel({ pais, onInfoClick }: ARModelProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const sceneElementRef = useRef<HTMLElement | null>(null);
   const modelEntityHiroRef = useRef<HTMLElement | null>(null);
   const modelEntityCustomRef = useRef<HTMLElement | null>(null);
+  const modelEntityPaisRef = useRef<HTMLElement | null>(null);
   const particlesEntityHiroRef = useRef<HTMLElement | null>(null);
   const particlesEntityCustomRef = useRef<HTMLElement | null>(null);
+  const particlesEntityPaisRef = useRef<HTMLElement | null>(null);
   const [modeloCargado, setModeloCargado] = useState(false);
   const [infoModeActive, setInfoModeActive] = useState(false);
   const [marcadorDetectado, setMarcadorDetectado] = useState<string | null>(null);
@@ -224,11 +253,54 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         // Error silencioso al cargar el patrón
       });
 
+      // ========== MARCADOR ESPECÍFICO DEL PAÍS ==========
+      const nombrePatt = mapaMarcadoresPais[pais];
+      let markerPais: HTMLElement | null = null;
+      let loadingGroupPais: HTMLElement | null = null;
+      let modelEntityPais: HTMLElement | null = null;
+      let particlesGroupPais: HTMLElement | null = null;
+
+      if (nombrePatt) {
+        const patternPaisUrl = `${window.location.origin}/markers/${nombrePatt}.patt`;
+        markerPais = document.createElement('a-marker');
+        markerPais.setAttribute('type', 'pattern');
+        markerPais.setAttribute('url', patternPaisUrl);
+        markerPais.setAttribute('id', `marker-pais-${nombrePatt}`);
+        markerPais.setAttribute('smooth', 'true');
+        markerPais.setAttribute('smoothCount', '5');
+        markerPais.setAttribute('emitevents', 'true');
+        markerPais.setAttribute('size', '1');
+
+        loadingGroupPais = createLoadingGroup();
+        modelEntityPais = createModelEntity('pais');
+        particlesGroupPais = createParticlesGroup();
+
+        markerPais.appendChild(loadingGroupPais);
+        markerPais.appendChild(modelEntityPais);
+        markerPais.appendChild(particlesGroupPais);
+
+        markerPais.addEventListener('markerFound', () => {
+          setMarcadorDetectado(pais);
+          loadingGroupPais!.setAttribute('visible', 'false');
+          modelEntityPais!.setAttribute('visible', 'true');
+        });
+
+        markerPais.addEventListener('markerLost', () => {
+          setMarcadorDetectado(null);
+          loadingGroupPais!.setAttribute('visible', 'true');
+          modelEntityPais!.setAttribute('visible', 'false');
+        });
+
+        markerPais.addEventListener('markerError', (_e: any) => { /* silencioso */ });
+      }
+
       // Guardar referencias
       modelEntityHiroRef.current = modelEntityHiro;
       modelEntityCustomRef.current = modelEntityCustom;
+      modelEntityPaisRef.current = modelEntityPais;
       particlesEntityHiroRef.current = particlesGroupHiro;
       particlesEntityCustomRef.current = particlesGroupCustom;
+      particlesEntityPaisRef.current = particlesGroupPais;
 
       // ========== ILUMINACIÓN ==========
       
@@ -260,6 +332,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       // Ensamblar escena
       scene.appendChild(markerHiro);
       scene.appendChild(markerCustom);
+      if (markerPais) scene.appendChild(markerPais); // marcador del país activo
       scene.appendChild(camera);
       scene.appendChild(ambientLight);
 
@@ -298,8 +371,10 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       sceneElementRef.current = null;
       modelEntityHiroRef.current = null;
       modelEntityCustomRef.current = null;
+      modelEntityPaisRef.current = null;
       particlesEntityHiroRef.current = null;
       particlesEntityCustomRef.current = null;
+      particlesEntityPaisRef.current = null;
       setModeloCargado(false);
       setMarcadorDetectado(null);
     };
@@ -307,8 +382,19 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
 
   // Función para manejar el click en información
   const handleInfoButtonClick = () => {
-    const activeModel = marcadorDetectado === 'Kickoff' ? modelEntityCustomRef.current : modelEntityHiroRef.current;
-    const activeParticles = marcadorDetectado === 'Kickoff' ? particlesEntityCustomRef.current : particlesEntityHiroRef.current;
+    // Detectar qué modelo y partículas usar según el marcador activo
+    let activeModel: HTMLElement | null;
+    let activeParticles: HTMLElement | null;
+    if (marcadorDetectado === 'Kickoff') {
+      activeModel   = modelEntityCustomRef.current;
+      activeParticles = particlesEntityCustomRef.current;
+    } else if (marcadorDetectado === pais) {
+      activeModel   = modelEntityPaisRef.current;
+      activeParticles = particlesEntityPaisRef.current;
+    } else {
+      activeModel   = modelEntityHiroRef.current;
+      activeParticles = particlesEntityHiroRef.current;
+    }
     
     if (!activeModel) return;
     
@@ -316,32 +402,58 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
     setInfoModeActive(newInfoMode);
     
     if (newInfoMode) {
-      // Activar modo info: rotación y partículas
       activeModel.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear');
-      
-      // Mostrar partículas
-      if (activeParticles) {
-        activeParticles.setAttribute('visible', 'true');
-      }
-      
-      // Llamar al callback externo si existe
-      if (onInfoClick) {
-        onInfoClick();
-      }
+      if (activeParticles) activeParticles.setAttribute('visible', 'true');
+      if (onInfoClick) onInfoClick();
     } else {
-      // Desactivar modo info: detener rotación y ocultar partículas
       activeModel.removeAttribute('animation');
       activeModel.setAttribute('rotation', '0 0 0');
-      
-      // Ocultar partículas
-      if (activeParticles) {
-        activeParticles.setAttribute('visible', 'false');
-      }
+      if (activeParticles) activeParticles.setAttribute('visible', 'false');
     }
   };
 
   return (
     <>
+      {/* Burbuja de descripción del país — visible entre el frame y los botones */}
+      {marcadorDetectado && descripcionesPais[pais] && (
+        <div style={{
+          position: 'fixed',
+          bottom: '13%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          maxWidth: '82vw',
+          width: 'max-content',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(5px)',
+          color: 'white',
+          borderRadius: '20px',
+          padding: '10px 18px',
+          zIndex: 10000,
+          pointerEvents: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          fontSize: '0.88rem',
+          animation: 'bubbleIn 0.35s ease',
+        }}>
+          <img
+            src={`https://flagcdn.com/w40/${descripcionesPais[pais].flagCode}.png`}
+            alt={pais}
+            style={{
+              width: '28px',
+              height: 'auto',
+              borderRadius: '3px',
+              flexShrink: 0,
+              display: 'block',
+            }}
+          />
+          <p style={{ margin: 0, lineHeight: 1.4, opacity: 0.95, maxWidth: '68vw' }}>
+            {descripcionesPais[pais].desc}
+          </p>
+        </div>
+      )}
+
       {/* Frame delimitador */}
       <div style={{
         position: 'fixed',
@@ -468,6 +580,10 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        @keyframes bubbleIn {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
       `}</style>
     </>
