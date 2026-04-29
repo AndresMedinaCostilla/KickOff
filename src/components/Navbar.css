@@ -99,3 +99,19 @@
 body.menu-open {
   overflow: hidden;
 }
+
+/* Botón Escanear en navbar desktop - igual que los demás links */
+.nav-scan-btn {
+  transition: opacity 0.2s ease !important;
+}
+.nav-scan-btn:hover {
+  opacity: 0.8 !important;
+}
+
+/* Botón Escanear destacado en menú móvil */
+.mobile-menu-item--scan {
+  background-color: #2a5a9d !important;
+}
+.mobile-menu-item--scan:hover {
+  background-color: #3570c4 !important;
+}

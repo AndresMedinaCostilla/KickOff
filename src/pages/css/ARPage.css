@@ -32,13 +32,19 @@ html:has(body.ar-active) {
   display: block;
 }
 
-/* Ocultar elementos de debug de AR.js pero NO el video */
+/* Ocultar elementos de debug de AR.js pero NO el video ni el canvas principal */
 .a-enter-vr-button,
 .arjs-loader,
 .a-orientation-modal,
 .a-modal {
   display: none !important;
 }
+
+/* Ocultar el canvas de debug verde de AR.js (el que dibuja el borde del marcador) */
+body.ar-active canvas:not(.a-canvas):not(.video-pixel-canvas) {
+  display: none !important;
+}
+
 
 /* CORRECCIÓN: Video de AR.js ocupa toda la pantalla SIN franjas */
 body.ar-active video:not(.video-player) {
@@ -68,9 +74,18 @@ body.ar-active .a-canvas {
   z-index: 1 !important;
   background: transparent !important;
   margin: 0 !important;
-  padding: 0 !important;
-  pointer-events: none !important;
+  border: none !important;
+  outline: none !important;
 }
+
+/* Eliminar el borde/recuadro verde de AR.js */
+body.ar-active canvas,
+body.ar-active a-scene {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 
 /* Escena de A-Frame con fondo transparente */
 body.ar-active a-scene {
@@ -739,3 +754,46 @@ body:not(.ar-active) #root {
     margin: 0 12px;
   }
 }
+
+/* =============================================
+   MODO LIBRE: selector de país (combobox)
+   ============================================= */
+.ar-pais-selector {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10100;
+  display: flex;
+  align-items: center;
+  background: rgba(26, 58, 109, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 12px;
+  padding: 6px 14px;
+  color: #fff;
+  font-size: 0.85rem;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  max-width: 90vw;
+}
+
+.ar-pais-combobox {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  outline: none;
+  padding: 2px 4px;
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
+.ar-pais-combobox option {
+  background: #1a3a6d;
+  color: #fff;
+  font-weight: 600;
+}

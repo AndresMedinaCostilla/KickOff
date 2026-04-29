@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../css/ARPage.css';
 import { obtenerPaisActual, eliminarPaisActual } from '../ts/paisStorage';
 import ARModel from './ARModel';
@@ -95,6 +95,20 @@ function ARPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelAnimRef = useRef<number | null>(null);
   const isNavigatingRef = useRef(false);
+  const [searchParams] = useSearchParams();
+  const modoLibre = searchParams.get('modo') === 'libre';
+
+  // Lista de países disponibles (sin México)
+  const PAISES_DISPONIBLES = [
+    'SUDÁFRICA',
+    'COREA DEL SUR',
+    'COLOMBIA',
+    'UZBEKISTÁN',
+    'TÚNEZ',
+    'JAPÓN',
+    'ESPAÑA',
+    'URUGUAY',
+  ] as const;
 
   // RESTAURACIÓN COMPLETA - Función mejorada
   const restoreBodyStyles = () => {
@@ -189,19 +203,30 @@ function ARPage() {
 
   // VERIFICACIÓN INICIAL
   useEffect(() => {
-    const pais = obtenerPaisActual();
-    
-    if (pais) {
-      setPaisActual(pais);
+    if (modoLibre) {
+      // Modo libre: leer el país del URL param (o usar SUDÁFRICA por defecto)
+      const paisDeUrl = searchParams.get('pais');
+      const primerPais = paisDeUrl && PAISES_DISPONIBLES.includes(paisDeUrl as any)
+        ? paisDeUrl
+        : 'SUDÁFRICA';
+      setPaisActual(primerPais);
       setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
       setIsLoading(false);
-      
-      // Aplicar estilos de AR
       document.body.classList.add('ar-active');
       document.body.style.overflow = 'hidden';
       document.body.style.height = '100vh';
     } else {
-      navigate('/paises');
+      const pais = obtenerPaisActual();
+      if (pais) {
+        setPaisActual(pais);
+        setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
+        setIsLoading(false);
+        document.body.classList.add('ar-active');
+        document.body.style.overflow = 'hidden';
+        document.body.style.height = '100vh';
+      } else {
+        navigate('/paises');
+      }
     }
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -214,7 +239,7 @@ function ARPage() {
         cleanupAR();
       }
     };
-  }, [navigate]);
+  }, [navigate, modoLibre]);
 
   const handleInfoClick = () => {
   setShowInfoMessage(true);
@@ -508,9 +533,29 @@ function ARPage() {
         ←
       </button>
 
-      <div className="ar-pais-indicator">
-        {paisActual}
-      </div>
+      {/* Selector de país en modo libre / indicador en modo normal */}
+      {modoLibre ? (
+        <div className="ar-pais-selector">
+          <select
+            id="ar-pais-combobox"
+            className="ar-pais-combobox"
+            value={paisActual ?? ''}
+            onChange={(e) => {
+              const nuevoPais = e.target.value;
+              // Recarga completa para evitar crash de AR.js WebAssembly
+              window.location.href = `/ar?modo=libre&pais=${encodeURIComponent(nuevoPais)}`;
+            }}
+          >
+            {PAISES_DISPONIBLES.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      ) : (
+        <div className="ar-pais-indicator">
+          {paisActual}
+        </div>
+      )}
 
       <div className="ar-buttons-container">
         <button

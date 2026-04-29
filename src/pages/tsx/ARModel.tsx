@@ -506,25 +506,8 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         }}
       />
       
-      {/* Indicador de marcador detectado */}
-      {marcadorDetectado && (
-        <div style={{
-          position: 'fixed',
-          top: '100px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: 'rgba(40, 167, 69, 0.9)',
-          color: 'white',
-          padding: '8px 16px',
-          borderRadius: '20px',
-          fontSize: '0.85rem',
-          fontWeight: 'bold',
-          zIndex: 1000,
-          pointerEvents: 'none'
-        }}>
-          Marcador {marcadorDetectado} detectado
-        </div>
-      )}
+
+
       
       {/* Botones de Animación e Info */}
       {modeloCargado && (
