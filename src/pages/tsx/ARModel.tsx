@@ -18,6 +18,19 @@ const descripcionesPais: Record<string, { flagCode: string; desc: string }> = {
   'URUGUAY':      { flagCode: 'uy', desc: 'Bicampeón mundial (1930 y 1950) y anfitrión del primer Mundial.' },
 };
 
+// Estadísticas del equipo por país (mismos datos que las páginas de países)
+const estadisticasPais: Record<string, { ranking: string; mundiales: string; titulos: string; mejorResultado: string }> = {
+  'MÉXICO':       { ranking: '#15', mundiales: '17', titulos: '0', mejorResultado: 'Cuartos' },
+  'SUDÁFRICA':    { ranking: '#71', mundiales: '3',  titulos: '0', mejorResultado: 'Grupos' },
+  'COREA DEL SUR':{ ranking: '#22', mundiales: '11', titulos: '0', mejorResultado: '4.º lugar' },
+  'COLOMBIA':     { ranking: '#17', mundiales: '6',  titulos: '0', mejorResultado: 'Cuartos' },
+  'UZBEKISTÁN':   { ranking: '#64', mundiales: '1',  titulos: '0', mejorResultado: 'Debut' },
+  'TÚNEZ':        { ranking: '#30', mundiales: '6',  titulos: '0', mejorResultado: 'Grupos' },
+  'JAPÓN':        { ranking: '#16', mundiales: '7',  titulos: '0', mejorResultado: 'Octavos' },
+  'ESPAÑA':       { ranking: '#2',  mundiales: '16', titulos: '1', mejorResultado: 'Campeón' },
+  'URUGUAY':      { ranking: '#17', mundiales: '14', titulos: '2', mejorResultado: 'Campeón' },
+};
+
 // Mapa de nombres de país → archivo .patt
 // Los que tenían .patt originales correctos vuelven a ellos.
 // Corea, España, Uruguay, Túnez usan los regenerados.
@@ -44,6 +57,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
   const [modeloCargado, setModeloCargado] = useState(false);
   const [infoModeActive, setInfoModeActive] = useState(false);
   const [marcadorDetectado, setMarcadorDetectado] = useState<string | null>(null);
+  const [showInfoPanel, setShowInfoPanel] = useState(false);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -512,67 +526,199 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         </div>
       )}
       
-      {/* Botón de información */}
+      {/* Botones de Animación e Info */}
       {modeloCargado && (
-        <button
-          onClick={handleInfoButtonClick}
-          style={{
-            position: 'fixed',
-            bottom: '18%',
-            right: '18%',
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            backgroundColor: infoModeActive ? '#28a745' : '#6c757d',
-            color: 'white',
-            border: '3px solid white',
-            boxShadow: infoModeActive 
-              ? '0 0 20px rgba(40, 167, 69, 0.8), 0 4px 12px rgba(0,0,0,0.3)' 
-              : '0 4px 12px rgba(0,0,0,0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            zIndex: 1000,
-            transition: 'all 0.3s ease',
-            transform: infoModeActive ? 'scale(1.1)' : 'scale(1)'
-          }}
-          onMouseEnter={(e) => {
-            if (!infoModeActive) {
-              e.currentTarget.style.backgroundColor = '#5a6268';
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!infoModeActive) {
-              e.currentTarget.style.backgroundColor = '#6c757d';
-              e.currentTarget.style.transform = 'scale(1)';
-            }
-          }}
-        >
-          i
-        </button>
+        <div style={{
+          position: 'fixed',
+          bottom: '18%',
+          right: '12%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          zIndex: 1000,
+        }}>
+
+          {/* Botón Animación (antes: modo info con 'i') */}
+          <button
+            onClick={handleInfoButtonClick}
+            title="Animación del modelo"
+            style={{
+              width: '54px',
+              height: '54px',
+              borderRadius: '50%',
+              backgroundColor: infoModeActive ? '#7c3aed' : 'rgba(30,20,60,0.75)',
+              color: 'white',
+              border: `3px solid ${infoModeActive ? '#a78bfa' : 'rgba(255,255,255,0.7)'}`,
+              boxShadow: infoModeActive
+                ? '0 0 22px rgba(124,58,237,0.85), 0 4px 14px rgba(0,0,0,0.4)'
+                : '0 4px 14px rgba(0,0,0,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1px',
+              fontSize: '20px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              transform: infoModeActive ? 'scale(1.12)' : 'scale(1)',
+              backdropFilter: 'blur(6px)',
+              padding: 0,
+            }}
+          >
+            <span style={{ fontSize: '20px', lineHeight: 1 }}>✨</span>
+            <span style={{ fontSize: '8px', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.1 }}>Anim</span>
+          </button>
+
+          {/* Botón Info */}
+          <button
+            onClick={() => setShowInfoPanel(p => !p)}
+            title="Información del país"
+            style={{
+              width: '54px',
+              height: '54px',
+              borderRadius: '50%',
+              backgroundColor: showInfoPanel ? '#0ea5e9' : 'rgba(10,30,60,0.75)',
+              color: 'white',
+              border: `3px solid ${showInfoPanel ? '#38bdf8' : 'rgba(255,255,255,0.7)'}`,
+              boxShadow: showInfoPanel
+                ? '0 0 22px rgba(14,165,233,0.85), 0 4px 14px rgba(0,0,0,0.4)'
+                : '0 4px 14px rgba(0,0,0,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1px',
+              fontSize: '20px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              transform: showInfoPanel ? 'scale(1.12)' : 'scale(1)',
+              backdropFilter: 'blur(6px)',
+              padding: 0,
+            }}
+          >
+            <span style={{ fontSize: '20px', lineHeight: 1 }}>ℹ️</span>
+            <span style={{ fontSize: '8px', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.1 }}>Info</span>
+          </button>
+        </div>
       )}
 
-      {/* Indicador de modo info activo */}
+      {/* Indicador de animación activa */}
       {infoModeActive && (
         <div style={{
           position: 'fixed',
-          bottom: '25%',
-          right: '18%',
-          backgroundColor: 'rgba(40, 167, 69, 0.9)',
+          bottom: '28%',
+          right: '20%',
+          backgroundColor: 'rgba(124, 58, 237, 0.9)',
           color: 'white',
-          padding: '8px 16px',
+          padding: '6px 14px',
           borderRadius: '20px',
-          fontSize: '0.85rem',
+          fontSize: '0.78rem',
           fontWeight: 'bold',
           zIndex: 999,
           animation: 'pulse 2s infinite',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          backdropFilter: 'blur(4px)',
         }}>
-          Modo Info Activo
+          ✨ Animación activa
+        </div>
+      )}
+
+      {/* Panel de Información del País */}
+      {showInfoPanel && descripcionesPais[pais] && (
+        <div
+          onClick={() => setShowInfoPanel(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 10001,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,0.45)',
+            backdropFilter: 'blur(3px)',
+            padding: '0 0 90px 0',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'linear-gradient(145deg, rgba(10,18,42,0.97) 0%, rgba(20,10,50,0.97) 100%)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '20px',
+              padding: '20px 20px 22px',
+              width: 'min(90vw, 380px)',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(56,189,248,0.2)',
+              color: 'white',
+              animation: 'infoPanelIn 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+            }}
+          >
+            {/* Header con bandera */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+              <img
+                src={`https://flagcdn.com/w40/${descripcionesPais[pais].flagCode}.png`}
+                alt={pais}
+                style={{ width: '36px', height: 'auto', borderRadius: '4px', boxShadow: '0 2px 6px rgba(0,0,0,0.4)' }}
+              />
+              <div>
+                <p style={{ margin: 0, fontSize: '0.7rem', color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Selección de</p>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.04em' }}>{pais}</h3>
+              </div>
+              <button
+                onClick={() => setShowInfoPanel(false)}
+                style={{
+                  marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', border: 'none',
+                  color: 'white', width: '28px', height: '28px', borderRadius: '50%',
+                  cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >✕</button>
+            </div>
+
+            {/* Descripción */}
+            <p style={{
+              margin: '0 0 16px 0', fontSize: '0.88rem', lineHeight: 1.5,
+              color: '#cbd5e1', borderLeft: '3px solid #38bdf8',
+              paddingLeft: '10px',
+            }}>
+              {descripcionesPais[pais].desc}
+            </p>
+
+            {/* Divisor */}
+            <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '0 0 14px 0' }} />
+
+            {/* Estadísticas */}
+            {estadisticasPais[pais] && (
+              <>
+                <p style={{ margin: '0 0 10px 0', fontSize: '0.7rem', color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Estadísticas Históricas
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {[
+                    { icono: '🌍', valor: estadisticasPais[pais].ranking,        label: 'Ranking FIFA' },
+                    { icono: '⚽', valor: estadisticasPais[pais].mundiales,      label: 'Mundiales Jugados' },
+                    { icono: '🏆', valor: estadisticasPais[pais].titulos,        label: 'Títulos Mundiales' },
+                    { icono: '🎯', valor: estadisticasPais[pais].mejorResultado, label: 'Mejor Resultado' },
+                  ].map((stat) => (
+                    <div key={stat.label} style={{
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      padding: '10px 10px 8px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '2px',
+                      textAlign: 'center',
+                    }}>
+                      <span style={{ fontSize: '20px' }}>{stat.icono}</span>
+                      <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#f0f9ff' }}>{stat.valor}</span>
+                      <span style={{ fontSize: '0.67rem', color: '#94a3b8', lineHeight: 1.2 }}>{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 
@@ -584,6 +730,10 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         @keyframes bubbleIn {
           from { opacity: 0; transform: translateX(-50%) translateY(10px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes infoPanelIn {
+          from { opacity: 0; transform: translateY(30px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
     </>
