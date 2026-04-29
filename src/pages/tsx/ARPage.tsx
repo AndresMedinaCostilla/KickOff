@@ -529,7 +529,7 @@ function ARPage() {
         </button>
         <button 
           className="ar-action-button"
-          onClick={() => setShowVideoModal(true)}
+          onClick={() => { setShowVideoModal(true); setSelectedFilter(1); }}
         >
           Video
         </button>
