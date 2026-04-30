@@ -12,8 +12,9 @@ import Tunez from './pages/tsx/Tunez.tsx';
 import Japon from './pages/tsx/Japon.tsx';
 import Espana from './pages/tsx/Espana.tsx';
 import Uruguay from './pages/tsx/Uruguay.tsx';
-import ARPage from "./pages/tsx/ARPage.tsx"; // Importa la nueva página AR
+import ARPage from "./pages/tsx/ARPage.tsx";
 import Footer from './components/Footer';
+import FloatingARButton from './components/FloatingARButton';
 
 function App() {
   return (
@@ -33,10 +34,11 @@ function App() {
         <Route path="/japon" element={<Japon />} />
         <Route path="/espana" element={<Espana />} />
         <Route path="/uruguay" element={<Uruguay />} />
-        <Route path="/ar" element={<ARPage />} /> {/* Nueva ruta para AR */}
+        <Route path="/ar" element={<ARPage />} />
       </Routes>
       
       <Footer />
+      <FloatingARButton />
     </BrowserRouter>
   );
 }

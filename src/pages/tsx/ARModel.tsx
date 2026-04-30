@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 interface ARModelProps {
   pais: string;
   onInfoClick?: () => void;
+  modoLibre?: boolean;
+  onMarkerDetected?: (pais: string) => void;
 }
 
 // Descripciones cortas por país para la burbuja AR
@@ -45,7 +47,7 @@ const mapaMarcadoresPais: Record<string, string> = {
   'URUGUAY':      'uruguay',//*
 };
 
-function ARModel({ pais, onInfoClick }: ARModelProps) {
+function ARModel({ pais, onInfoClick, modoLibre = false, onMarkerDetected }: ARModelProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const sceneElementRef = useRef<HTMLElement | null>(null);
   const modelEntityHiroRef = useRef<HTMLElement | null>(null);
@@ -54,10 +56,15 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
   const particlesEntityHiroRef = useRef<HTMLElement | null>(null);
   const particlesEntityCustomRef = useRef<HTMLElement | null>(null);
   const particlesEntityPaisRef = useRef<HTMLElement | null>(null);
-  const [modeloCargado, setModeloCargado] = useState(false);
+  const modelsMapRef = useRef<Record<string, { model: HTMLElement, particles: HTMLElement }>>({});
   const [infoModeActive, setInfoModeActive] = useState(false);
   const [marcadorDetectado, setMarcadorDetectado] = useState<string | null>(null);
   const [showInfoPanel, setShowInfoPanel] = useState(false);
+
+  const onMarkerDetectedRef = useRef(onMarkerDetected);
+  useEffect(() => {
+    onMarkerDetectedRef.current = onMarkerDetected;
+  }, [onMarkerDetected]);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -113,22 +120,18 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         return loadingGroup;
       };
 
-      const createModelEntity = (markerType: string) => {
+      const createModelEntity = (markerType: string, ruta: string = rutaModelo) => {
         const modelEntity = document.createElement('a-entity');
         modelEntity.setAttribute('id', `modelo-3d-${markerType}`);
         modelEntity.setAttribute('position', '0 0 0');
         modelEntity.setAttribute('scale', '0.1 0.1 0.1');
         modelEntity.setAttribute('visible', 'false');
 
-        fetch(rutaModelo)
+        fetch(ruta)
           .then(response => {
             if (response.ok) {
-              modelEntity.setAttribute('gltf-model', rutaModelo);
+              modelEntity.setAttribute('gltf-model', ruta);
               modelEntity.setAttribute('scale', '0.15 0.15 0.15');
-              
-              modelEntity.addEventListener('model-loaded', () => {
-                setModeloCargado(true);
-              });
             }
           })
           .catch(() => {
@@ -267,54 +270,73 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
         // Error silencioso al cargar el patrón
       });
 
-      // ========== MARCADOR ESPECÍFICO DEL PAÍS ==========
-      const nombrePatt = mapaMarcadoresPais[pais];
-      let markerPais: HTMLElement | null = null;
-      let loadingGroupPais: HTMLElement | null = null;
-      let modelEntityPais: HTMLElement | null = null;
-      let particlesGroupPais: HTMLElement | null = null;
+      // ========== MARCADORES ESPECÍFICOS DE PAÍSES ==========
+      const countryMarkers: HTMLElement[] = [];
+      let markerPais: HTMLElement | null = null; // ref original si no es libre
 
-      if (nombrePatt) {
+      const cargarMarcadorPais = (nombrePais: string) => {
+        const nombrePatt = mapaMarcadoresPais[nombrePais];
+        if (!nombrePatt) return null;
+
         const patternPaisUrl = `${window.location.origin}/markers/${nombrePatt}.patt`;
-        markerPais = document.createElement('a-marker');
-        markerPais.setAttribute('type', 'pattern');
-        markerPais.setAttribute('url', patternPaisUrl);
-        markerPais.setAttribute('id', `marker-pais-${nombrePatt}`);
-        markerPais.setAttribute('smooth', 'true');
-        markerPais.setAttribute('smoothCount', '5');
-        markerPais.setAttribute('emitevents', 'true');
-        markerPais.setAttribute('size', '1');
+        const marker = document.createElement('a-marker');
+        marker.setAttribute('type', 'pattern');
+        marker.setAttribute('url', patternPaisUrl);
+        marker.setAttribute('id', `marker-pais-${nombrePatt}`);
+        marker.setAttribute('smooth', 'true');
+        marker.setAttribute('smoothCount', '5');
+        marker.setAttribute('emitevents', 'true');
+        marker.setAttribute('size', '1');
 
-        loadingGroupPais = createLoadingGroup();
-        modelEntityPais = createModelEntity('pais');
-        particlesGroupPais = createParticlesGroup();
+        const loadingGroup = createLoadingGroup();
+        const rutaMod = `/modelos/${mapaModelos[nombrePais]}.glb`;
+        const modelEntity = createModelEntity(nombrePatt, rutaMod);
+        const particlesGroup = createParticlesGroup();
+        
+        modelsMapRef.current[nombrePais] = { model: modelEntity, particles: particlesGroup };
 
-        markerPais.appendChild(loadingGroupPais);
-        markerPais.appendChild(modelEntityPais);
-        markerPais.appendChild(particlesGroupPais);
+        marker.appendChild(loadingGroup);
+        marker.appendChild(modelEntity);
+        marker.appendChild(particlesGroup);
 
-        markerPais.addEventListener('markerFound', () => {
-          setMarcadorDetectado(pais);
-          loadingGroupPais!.setAttribute('visible', 'false');
-          modelEntityPais!.setAttribute('visible', 'true');
+        marker.addEventListener('markerFound', () => {
+          setMarcadorDetectado(nombrePais);
+          if (onMarkerDetectedRef.current) onMarkerDetectedRef.current(nombrePais);
+          loadingGroup.setAttribute('visible', 'false');
+          modelEntity.setAttribute('visible', 'true');
         });
 
-        markerPais.addEventListener('markerLost', () => {
+        marker.addEventListener('markerLost', () => {
           setMarcadorDetectado(null);
-          loadingGroupPais!.setAttribute('visible', 'true');
-          modelEntityPais!.setAttribute('visible', 'false');
+          loadingGroup.setAttribute('visible', 'true');
+          modelEntity.setAttribute('visible', 'false');
         });
 
-        markerPais.addEventListener('markerError', (_e: any) => { /* silencioso */ });
+        marker.addEventListener('markerError', (_e: any) => { /* silencioso */ });
+        return { marker, loadingGroup, modelEntity, particlesGroup };
+      };
+
+      if (modoLibre) {
+        // Cargar todos los marcadores
+        Object.keys(mapaMarcadoresPais).forEach((p) => {
+          const res = cargarMarcadorPais(p);
+          if (res) countryMarkers.push(res.marker);
+        });
+      } else {
+        // Cargar solo el del país seleccionado
+        const res = cargarMarcadorPais(pais);
+        if (res) {
+           markerPais = res.marker;
+           modelEntityPaisRef.current = res.modelEntity;
+           particlesEntityPaisRef.current = res.particlesGroup;
+        }
       }
 
-      // Guardar referencias
+      // Guardar referencias genéricas (las específicas ya se guardaron arriba si no es libre)
       modelEntityHiroRef.current = modelEntityHiro;
       modelEntityCustomRef.current = modelEntityCustom;
-      modelEntityPaisRef.current = modelEntityPais;
       particlesEntityHiroRef.current = particlesGroupHiro;
       particlesEntityCustomRef.current = particlesGroupCustom;
-      particlesEntityPaisRef.current = particlesGroupPais;
 
       // ========== ILUMINACIÓN ==========
       
@@ -346,7 +368,13 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       // Ensamblar escena
       scene.appendChild(markerHiro);
       scene.appendChild(markerCustom);
-      if (markerPais) scene.appendChild(markerPais); // marcador del país activo
+      
+      if (modoLibre) {
+        countryMarkers.forEach(m => scene.appendChild(m));
+      } else if (markerPais) {
+        scene.appendChild(markerPais);
+      }
+      
       scene.appendChild(camera);
       scene.appendChild(ambientLight);
 
@@ -389,25 +417,27 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
       particlesEntityHiroRef.current = null;
       particlesEntityCustomRef.current = null;
       particlesEntityPaisRef.current = null;
-      setModeloCargado(false);
       setMarcadorDetectado(null);
     };
-  }, [pais]);
+  }, [modoLibre, modoLibre ? null : pais]);
 
   // Función para manejar el click en información
   const handleInfoButtonClick = () => {
     // Detectar qué modelo y partículas usar según el marcador activo
-    let activeModel: HTMLElement | null;
-    let activeParticles: HTMLElement | null;
+    let activeModel: HTMLElement | null = null;
+    let activeParticles: HTMLElement | null = null;
     if (marcadorDetectado === 'Kickoff') {
       activeModel   = modelEntityCustomRef.current;
       activeParticles = particlesEntityCustomRef.current;
-    } else if (marcadorDetectado === pais) {
-      activeModel   = modelEntityPaisRef.current;
-      activeParticles = particlesEntityPaisRef.current;
-    } else {
+    } else if (marcadorDetectado === 'Hiro') {
       activeModel   = modelEntityHiroRef.current;
       activeParticles = particlesEntityHiroRef.current;
+    } else if (marcadorDetectado && modelsMapRef.current[marcadorDetectado]) {
+      activeModel   = modelsMapRef.current[marcadorDetectado].model;
+      activeParticles = modelsMapRef.current[marcadorDetectado].particles;
+    } else if (marcadorDetectado === pais) { // Fallback por si acaso
+      activeModel   = modelEntityPaisRef.current;
+      activeParticles = particlesEntityPaisRef.current;
     }
     
     if (!activeModel) return;
@@ -510,7 +540,7 @@ function ARModel({ pais, onInfoClick }: ARModelProps) {
 
       
       {/* Botones de Animación e Info */}
-      {modeloCargado && (
+      {marcadorDetectado && (
         <div style={{
           position: 'fixed',
           bottom: '18%',

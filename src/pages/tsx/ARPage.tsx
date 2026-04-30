@@ -97,6 +97,7 @@ function ARPage() {
   const isNavigatingRef = useRef(false);
   const [searchParams] = useSearchParams();
   const modoLibre = searchParams.get('modo') === 'libre';
+  const [hasDetectedPattern, setHasDetectedPattern] = useState(false);
 
   // Lista de países disponibles (sin México)
   const PAISES_DISPONIBLES = [
@@ -251,6 +252,16 @@ function ARPage() {
     setShowInfoMessage(false);
   }, 2000);
 };
+
+  const handleMarkerDetected = (paisDetectado: string) => {
+    setHasDetectedPattern(true);
+    if (paisActual !== paisDetectado) {
+      setPaisActual(paisDetectado);
+      setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
+      // Actualizamos la URL silenciosamente para mantener la consistencia
+      window.history.replaceState(null, '', `/ar?modo=libre&pais=${encodeURIComponent(paisDetectado)}`);
+    }
+  };
 
   const getVideoSrc = (pais: string | null): string => {
     if (!pais) return '';
@@ -505,7 +516,12 @@ function ARPage() {
 
   return (
     <div className="ar-container">
-      <ARModel pais={paisActual} onInfoClick={handleInfoClick} />
+      <ARModel 
+        pais={paisActual} 
+        onInfoClick={handleInfoClick} 
+        modoLibre={modoLibre}
+        onMarkerDetected={handleMarkerDetected}
+      />
 
       
 
@@ -533,52 +549,35 @@ function ARPage() {
         ←
       </button>
 
-      {/* Selector de país en modo libre / indicador en modo normal */}
-      {modoLibre ? (
-        <div className="ar-pais-selector">
-          <select
-            id="ar-pais-combobox"
-            className="ar-pais-combobox"
-            value={paisActual ?? ''}
-            onChange={(e) => {
-              const nuevoPais = e.target.value;
-              // Recarga completa para evitar crash de AR.js WebAssembly
-              window.location.href = `/ar?modo=libre&pais=${encodeURIComponent(nuevoPais)}`;
+      {/* Indicador de país (pastilla) */}
+      <div className="ar-pais-indicator" style={{ minWidth: '120px', minHeight: '38px' }}>
+        {(!modoLibre || hasDetectedPattern) ? paisActual : ''}
+      </div>
+
+      {(!modoLibre || hasDetectedPattern) && (
+        <div className="ar-buttons-container">
+          <button
+            className="ar-action-button"
+            onClick={() => {
+              setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
+              setCurrentQIdx(0);
+              setScore(0);
+              setQuizFinished(false);
+              setShowTriviaModal(true);
+              setSelectedTriviaOption(null);
+              setShowResult(false);
             }}
           >
-            {PAISES_DISPONIBLES.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
-      ) : (
-        <div className="ar-pais-indicator">
-          {paisActual}
+            Trivia
+          </button>
+          <button 
+            className="ar-action-button"
+            onClick={() => { setShowVideoModal(true); setSelectedFilter(1); }}
+          >
+            Video
+          </button>
         </div>
       )}
-
-      <div className="ar-buttons-container">
-        <button
-          className="ar-action-button"
-          onClick={() => {
-            setTriviaQuestions(seleccionarPreguntas(TOTAL_PREGUNTAS));
-            setCurrentQIdx(0);
-            setScore(0);
-            setQuizFinished(false);
-            setShowTriviaModal(true);
-            setSelectedTriviaOption(null);
-            setShowResult(false);
-          }}
-        >
-          Trivia
-        </button>
-        <button 
-          className="ar-action-button"
-          onClick={() => { setShowVideoModal(true); setSelectedFilter(1); }}
-        >
-          Video
-        </button>
-      </div>
 
       {showTriviaModal && triviaQuestions.length > 0 && (
         <div className="modal-overlay" onClick={closeModal}>
