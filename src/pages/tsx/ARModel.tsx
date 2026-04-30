@@ -229,6 +229,10 @@ function ARModel({ pais, onInfoClick, modoLibre = false, onMarkerDetected }: ARM
 
       markerHiro.addEventListener('markerLost', () => {
         setMarcadorDetectado(null);
+        setInfoModeActive(false);
+        modelEntityHiro.removeAttribute('animation');
+        modelEntityHiro.setAttribute('rotation', '0 0 0');
+        particlesGroupHiro.setAttribute('visible', 'false');
         loadingGroupHiro.setAttribute('visible', 'true');
         modelEntityHiro.setAttribute('visible', 'false');
       });
@@ -262,6 +266,10 @@ function ARModel({ pais, onInfoClick, modoLibre = false, onMarkerDetected }: ARM
 
       markerCustom.addEventListener('markerLost', () => {
         setMarcadorDetectado(null);
+        setInfoModeActive(false);
+        modelEntityCustom.removeAttribute('animation');
+        modelEntityCustom.setAttribute('rotation', '0 0 0');
+        particlesGroupCustom.setAttribute('visible', 'false');
         loadingGroupCustom.setAttribute('visible', 'true');
         modelEntityCustom.setAttribute('visible', 'false');
       });
@@ -308,6 +316,10 @@ function ARModel({ pais, onInfoClick, modoLibre = false, onMarkerDetected }: ARM
 
         marker.addEventListener('markerLost', () => {
           setMarcadorDetectado(null);
+          setInfoModeActive(false);
+          modelEntity.removeAttribute('animation');
+          modelEntity.setAttribute('rotation', '0 0 0');
+          particlesGroup.setAttribute('visible', 'false');
           loadingGroup.setAttribute('visible', 'true');
           modelEntity.setAttribute('visible', 'false');
         });
