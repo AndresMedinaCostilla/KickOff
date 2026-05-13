@@ -120,7 +120,7 @@ function Ayuda() {
             </div>
             <div className="ayuda-card-body">
               <p className="card-text">
-                En esta sección encontrarás los 9 países incluidos en la aplicación para el Mundial 2026:
+                En esta sección encontrarás los 8 países incluidos en la aplicación para el Mundial 2026:
               </p>
               <ul className="ayuda-list">
                 <li className="ayuda-list-item">
@@ -133,13 +133,13 @@ function Ayuda() {
                 </li>
                 <li className="ayuda-list-item">
                   <i className="bi bi-eye text-success me-2"></i>
-                  <strong>Disponibles:</strong> México, España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán
+                  <strong>Disponibles:</strong> España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán
                 </li>
               </ul>
               <div className="ayuda-tip">
                 <small className="ayuda-tip-small">
                   <i className="bi bi-lightbulb me-1"></i>
-                  <strong>Consejo:</strong> Haz clic en "México" para ver un ejemplo completo con estadios, partidos, jugadores y estadísticas
+                  <strong>Consejo:</strong> Haz clic en cualquier país para ver su información completa con estadios, partidos, jugadores y estadísticas
                 </small>
               </div>
             </div>
@@ -268,10 +268,10 @@ function Ayuda() {
 
               <h6 className="fw-bold mt-4">Marcadores de imagen compatibles:</h6>
               <p className="text-muted small mb-3">
-                El AR reconoce los <strong>logos oficiales</strong> de los 9 países participantes impresos o mostrados en pantalla. No se usan códigos QR.
+                El AR reconoce los <strong>logos oficiales</strong> de los 8 países participantes impresos o mostrados en pantalla. No se usan códigos QR.
               </p>
               <div className="d-flex flex-wrap gap-2 mb-4">
-                {['México','España','Colombia','Japón','Corea del Sur','Uruguay','Túnez','Sudáfrica','Uzbekistán'].map(pais => (
+                {['España','Colombia','Japón','Corea del Sur','Uruguay','Túnez','Sudáfrica','Uzbekistán'].map(pais => (
                   <span key={pais} className="badge" style={{ backgroundColor: '#2a5a9d', fontSize: '0.8rem', padding: '0.4em 0.75em' }}>{pais}</span>
                 ))}
               </div>
@@ -398,7 +398,7 @@ function Ayuda() {
                     <div className="ayuda-accordion-body">
                       La aplicación utiliza los <strong>logos oficiales de cada país participante</strong> como marcadores de imagen.
                       Puedes imprimirlos o mostrarlos en la pantalla de otro dispositivo. El sistema reconoce los logos de:
-                      México, España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán.
+                      España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán.
                       No se usan códigos QR.
                     </div>
                   </div>
