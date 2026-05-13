@@ -1,7 +1,10 @@
 // Ayuda.tsx
+import { useNavigate } from 'react-router-dom';
 import '../css/Ayuda.css';
 
 function Ayuda() {
+  const navigate = useNavigate();
+
   return (
     <div className="container mt-4 mt-md-5 ayuda-container">
       {/* Encabezado */}
@@ -10,7 +13,7 @@ function Ayuda() {
           Guía de Funcionalidades - Mundial 2026
         </h1>
         <p className="lead">
-          Descubre cómo utilizar todas las características de nuestra aplicación para el Mundial 2026 en México
+          Descubre cómo utilizar todas las características de nuestra aplicación para el Mundial 2026
         </p>
       </div>
 
@@ -97,7 +100,7 @@ function Ayuda() {
               <div className="ayuda-tip">
                 <small className="ayuda-tip-small">
                   <i className="bi bi-lightbulb me-1"></i>
-                  <strong>Consejo:</strong> Explora el carrusel para conocer todas las funciones disponibles
+                  <strong>Consejo:</strong> El botón flotante de cámara (📷) está disponible en todas las páginas para acceder al modo AR en cualquier momento
                 </small>
               </div>
             </div>
@@ -117,7 +120,7 @@ function Ayuda() {
             </div>
             <div className="ayuda-card-body">
               <p className="card-text">
-                En esta sección encontrarás los 11 países que competirán en México durante el Mundial 2026:
+                En esta sección encontrarás los 9 países incluidos en la aplicación para el Mundial 2026:
               </p>
               <ul className="ayuda-list">
                 <li className="ayuda-list-item">
@@ -130,13 +133,13 @@ function Ayuda() {
                 </li>
                 <li className="ayuda-list-item">
                   <i className="bi bi-eye text-success me-2"></i>
-                  <strong>Vista previa:</strong> Cada tarjeta muestra la bandera y nombre del país
+                  <strong>Disponibles:</strong> México, España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán
                 </li>
               </ul>
               <div className="ayuda-tip">
                 <small className="ayuda-tip-small">
                   <i className="bi bi-lightbulb me-1"></i>
-                  <strong>Consejo:</strong> Haz clic en "México" para ver un ejemplo completo de funcionalidades
+                  <strong>Consejo:</strong> Haz clic en "México" para ver un ejemplo completo con estadios, partidos, jugadores y estadísticas
                 </small>
               </div>
             </div>
@@ -160,47 +163,54 @@ function Ayuda() {
               <p className="card-text">
                 Al seleccionar un país, accedes a una página con información detallada organizada en 4 secciones:
               </p>
-              
+
               <div className="row mt-4">
                 <div className="col-md-3 mb-3">
                   <div className="text-center">
                     <div className="ayuda-circle-icon-md bg-warning text-white">
                       <i className="bi bi-building fs-5"></i>
                     </div>
-                    <h6 className="fw-bold mb-1">Estadio</h6>
-                    <p className="small text-muted">Nombre e imagen del próximo estadio donde jugará</p>
+                    <h6 className="fw-bold mb-1">Estadios</h6>
+                    <p className="small text-muted">Nombre e imagen de los estadios donde jugará el equipo</p>
                   </div>
                 </div>
-                
+
                 <div className="col-md-3 mb-3">
                   <div className="text-center">
                     <div className="ayuda-circle-icon-md bg-warning text-white">
                       <i className="bi bi-calendar-event fs-5"></i>
                     </div>
                     <h6 className="fw-bold mb-1">Partidos</h6>
-                    <p className="small text-muted">Próximos encuentros con fechas y rivales</p>
+                    <p className="small text-muted">Partidos confirmados con fechas, rivales y tipo de fase</p>
                   </div>
                 </div>
-                
+
                 <div className="col-md-3 mb-3">
                   <div className="text-center">
                     <div className="ayuda-circle-icon-md bg-warning text-white">
                       <i className="bi bi-people fs-5"></i>
                     </div>
                     <h6 className="fw-bold mb-1">Jugadores</h6>
-                    <p className="small text-muted">Plantilla completa con nombre y posición</p>
+                    <p className="small text-muted">Jugadores destacados con nombre, posición e imagen</p>
                   </div>
                 </div>
-                
+
                 <div className="col-md-3 mb-3">
                   <div className="text-center">
                     <div className="ayuda-circle-icon-md bg-warning text-white">
-                      <i className="bi bi-arrow-left fs-5"></i>
+                      <i className="bi bi-bar-chart fs-5"></i>
                     </div>
-                    <h6 className="fw-bold mb-1">Navegación</h6>
-                    <p className="small text-muted">Botón circular para volver a la lista de países</p>
+                    <h6 className="fw-bold mb-1">Estadísticas</h6>
+                    <p className="small text-muted">Ranking FIFA, mundiales jugados, títulos y mejor resultado</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="ayuda-tip">
+                <small className="ayuda-tip-small">
+                  <i className="bi bi-lightbulb me-1"></i>
+                  <strong>Navegación:</strong> Usa el botón circular "←" en la parte superior para volver al listado de países
+                </small>
               </div>
             </div>
           </div>
@@ -221,64 +231,94 @@ function Ayuda() {
             </div>
             <div className="ayuda-card-body">
               <p className="card-text">
-                La funcionalidad más innovadora: un botón flotante con icono de cámara que activa el modo AR.
+                La funcionalidad más innovadora: un <strong>botón flotante de cámara</strong> visible en todas las páginas que activa el modo AR. Existen dos formas de usarlo:
               </p>
-              
-              <div className="ayuda-alert">
-                <h6 className="alert-heading fw-bold">
-                  <i className="bi bi-info-circle me-2"></i>
-                  ¿Cómo funciona?
-                </h6>
-                <ol className="mb-0 mt-2">
-                  <li className="mb-2">En la página de un país, busca el botón de cámara en la esquina inferior derecha</li>
-                  <li className="mb-2">Haz clic para activar el modo cámara</li>
-                  <li>Escanea un código QR oficial del Mundial 2026</li>
-                </ol>
-              </div>
-              
-              <h6 className="fw-bold mt-4">Contenido que puedes desbloquear:</h6>
-              <div className="ayuda-feature-grid">
-                <div className="ayuda-ar-feature">
-                  <div className="ayuda-ar-feature-icon">
-                    <i className="bi bi-play-btn"></i>
-                  </div>
-                  <div className="ayuda-ar-feature-content">
-                    <h6 className="ayuda-ar-feature-title">Videos exclusivos</h6>
-                    <p className="ayuda-ar-feature-text">Goles históricos, entrevistas y momentos destacados</p>
+
+              {/* Dos modos */}
+              <div className="row g-3 mb-3">
+                <div className="col-12 col-md-6">
+                  <div className="ayuda-alert">
+                    <h6 className="alert-heading fw-bold">
+                      <i className="bi bi-person-badge me-2"></i>
+                      Modo País (desde la página de un país)
+                    </h6>
+                    <ol className="mb-0 mt-2">
+                      <li className="mb-2">Entra a la página de un país (ej. España)</li>
+                      <li className="mb-2">Toca el botón flotante de cámara 📷</li>
+                      <li className="mb-2">Se activa el AR ya asociado a ese país</li>
+                      <li>Apunta al marcador del logo de ese país para ver el modelo 3D</li>
+                    </ol>
                   </div>
                 </div>
-                
+                <div className="col-12 col-md-6">
+                  <div className="ayuda-alert">
+                    <h6 className="alert-heading fw-bold">
+                      <i className="bi bi-camera-reels me-2"></i>
+                      Modo Libre (desde cualquier otra página)
+                    </h6>
+                    <ol className="mb-0 mt-2">
+                      <li className="mb-2">Toca el botón flotante de cámara 📷 desde Inicio, Países u otras páginas</li>
+                      <li className="mb-2">Se activa el modo libre con la cámara abierta</li>
+                      <li className="mb-2">Apunta al logo de cualquier país participante</li>
+                      <li>El sistema detecta automáticamente el país y muestra su modelo 3D</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              <h6 className="fw-bold mt-4">Marcadores de imagen compatibles:</h6>
+              <p className="text-muted small mb-3">
+                El AR reconoce los <strong>logos oficiales</strong> de los 9 países participantes impresos o mostrados en pantalla. No se usan códigos QR.
+              </p>
+              <div className="d-flex flex-wrap gap-2 mb-4">
+                {['México','España','Colombia','Japón','Corea del Sur','Uruguay','Túnez','Sudáfrica','Uzbekistán'].map(pais => (
+                  <span key={pais} className="badge" style={{ backgroundColor: '#2a5a9d', fontSize: '0.8rem', padding: '0.4em 0.75em' }}>{pais}</span>
+                ))}
+              </div>
+
+              <h6 className="fw-bold mt-2">Funciones disponibles dentro del modo AR:</h6>
+              <div className="ayuda-feature-grid">
                 <div className="ayuda-ar-feature">
                   <div className="ayuda-ar-feature-icon">
                     <i className="bi bi-cube"></i>
                   </div>
                   <div className="ayuda-ar-feature-content">
-                    <h6 className="ayuda-ar-feature-title">Modelos 3D</h6>
-                    <p className="ayuda-ar-feature-text">Estadios, trofeos y elementos del mundial en 3D</p>
+                    <h6 className="ayuda-ar-feature-title">Modelo 3D</h6>
+                    <p className="ayuda-ar-feature-text">El modelo 3D del país se superpone sobre el marcador al detectarlo. Incluye animaciones controlables</p>
                   </div>
                 </div>
-                
-                <div className="ayuda-ar-feature">
-                  <div className="ayuda-ar-feature-icon">
-                    <i className="bi bi-magic"></i>
-                  </div>
-                  <div className="ayuda-ar-feature-content">
-                    <h6 className="ayuda-ar-feature-title">Animaciones</h6>
-                    <p className="ayuda-ar-feature-text">Jugadas destacadas y efectos especiales</p>
-                  </div>
-                </div>
-                
+
                 <div className="ayuda-ar-feature">
                   <div className="ayuda-ar-feature-icon">
                     <i className="bi bi-question-circle"></i>
                   </div>
                   <div className="ayuda-ar-feature-content">
-                    <h6 className="ayuda-ar-feature-title">Trivias interactivas</h6>
-                    <p className="ayuda-ar-feature-text">Pon a prueba tus conocimientos sobre el mundial</p>
+                    <h6 className="ayuda-ar-feature-title">Trivia interactiva</h6>
+                    <p className="ayuda-ar-feature-text">Botón "Trivia" → quiz de 5 preguntas aleatorias de un banco de 40. Con sonidos, barra de progreso y confetti al acertar</p>
+                  </div>
+                </div>
+
+                <div className="ayuda-ar-feature">
+                  <div className="ayuda-ar-feature-icon">
+                    <i className="bi bi-play-btn"></i>
+                  </div>
+                  <div className="ayuda-ar-feature-content">
+                    <h6 className="ayuda-ar-feature-title">Video con filtros</h6>
+                    <p className="ayuda-ar-feature-text">Botón "Video" → reproduce un video del país. Aplica filtros: Normal, Desenfoque, Pixelado o Alta Saturación</p>
+                  </div>
+                </div>
+
+                <div className="ayuda-ar-feature">
+                  <div className="ayuda-ar-feature-icon">
+                    <i className="bi bi-arrow-left-circle"></i>
+                  </div>
+                  <div className="ayuda-ar-feature-content">
+                    <h6 className="ayuda-ar-feature-title">Volver</h6>
+                    <p className="ayuda-ar-feature-text">Botón "←" en la esquina superior izquierda para salir del modo AR y regresar al listado de países</p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="ayuda-tip">
                 <h6 className="fw-bold">
                   <i className="bi bi-exclamation-triangle text-danger me-2"></i>
@@ -286,9 +326,10 @@ function Ayuda() {
                 </h6>
                 <ul className="mb-0 mt-2">
                   <li className="mb-1">Permite el acceso a la cámara cuando el navegador lo solicite</li>
-                  <li className="mb-1">Usa códigos QR oficiales del Mundial 2026</li>
+                  <li className="mb-1">Usa los marcadores de logo de cada país (impresos o en pantalla)</li>
                   <li className="mb-1">Funciona mejor en dispositivos con giroscopio</li>
-                  <li>Asegúrate de tener buena iluminación al escanear</li>
+                  <li className="mb-1">Asegúrate de tener buena iluminación al escanear el marcador</li>
+                  <li>Recomendado en navegadores modernos (Chrome, Firefox, Safari actualizados)</li>
                 </ul>
               </div>
             </div>
@@ -310,7 +351,23 @@ function Ayuda() {
             </div>
             <div className="ayuda-card-body">
               <div className="accordion" id="faqAccordion">
-                              
+
+                {/* Pregunta 1 */}
+                <div className="ayuda-accordion-item">
+                  <h3 className="accordion-header">
+                    <button className="ayuda-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                      ¿Cómo accedo al modo de Realidad Aumentada?
+                    </button>
+                  </h3>
+                  <div id="faq1" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div className="ayuda-accordion-body">
+                      Toca el <strong>botón flotante de cámara 📷</strong> que aparece en la esquina inferior derecha en cualquier página de la aplicación.
+                      Si lo haces desde la página de un país, el AR ya viene asociado a ese país. Si lo haces desde otra página (Inicio, Países, etc.), 
+                      se activa el <strong>modo libre</strong> y puedes apuntar al logo de cualquier país para que el sistema lo detecte automáticamente.
+                    </div>
+                  </div>
+                </div>
+
                 {/* Pregunta 2 */}
                 <div className="ayuda-accordion-item">
                   <h3 className="accordion-header">
@@ -321,34 +378,56 @@ function Ayuda() {
                   <div id="faq2" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                     <div className="ayuda-accordion-body">
                       <ol className="mb-0">
-                        <li className="mb-1">Verifica que has dado permiso para usar la cámara</li>
+                        <li className="mb-1">Verifica que has dado permiso para usar la cámara en el navegador</li>
                         <li className="mb-1">Asegúrate de que tu dispositivo tenga giroscopio</li>
                         <li className="mb-1">Prueba en un lugar con mejor iluminación</li>
-                        <li>Actualiza tu navegador a la última versión</li>
+                        <li>Actualiza tu navegador a la última versión y vuelve a intentarlo</li>
                       </ol>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Pregunta 3 */}
                 <div className="ayuda-accordion-item">
                   <h3 className="accordion-header">
                     <button className="ayuda-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                      ¿Cómo vuelvo a la página principal desde cualquier sección?
+                      ¿Qué marcadores debo usar para el AR?
                     </button>
                   </h3>
                   <div id="faq3" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                     <div className="ayuda-accordion-body">
-                      Puedes usar el botón de navegación "Inicio" en el menú principal o hacer clic en el logo del sitio que aparece en la esquina superior izquierda.
+                      La aplicación utiliza los <strong>logos oficiales de cada país participante</strong> como marcadores de imagen.
+                      Puedes imprimirlos o mostrarlos en la pantalla de otro dispositivo. El sistema reconoce los logos de:
+                      México, España, Colombia, Japón, Corea del Sur, Uruguay, Túnez, Sudáfrica y Uzbekistán.
+                      No se usan códigos QR.
                     </div>
                   </div>
                 </div>
+
+                {/* Pregunta 4 */}
+                <div className="ayuda-accordion-item">
+                  <h3 className="accordion-header">
+                    <button className="ayuda-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                      ¿Cómo vuelvo a la página principal desde cualquier sección?
+                    </button>
+                  </h3>
+                  <div id="faq4" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div className="ayuda-accordion-body">
+                      Puedes usar la barra de navegación superior (Navbar) con el enlace "Inicio", o bien hacer clic en el logo del sitio en la esquina superior izquierda.
+                      Desde la página de un país, usa el botón circular "←" para volver al listado de países.
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              
+
               <div className="text-center mt-4">
-                <a href="/" className="ayuda-btn-primary">
+                <button
+                  className="ayuda-btn-primary"
+                  onClick={() => navigate('/')}
+                >
                   <i className="bi bi-house-door me-2"></i>Volver al Inicio
-                </a>
+                </button>
               </div>
             </div>
           </div>
